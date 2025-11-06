@@ -3,31 +3,37 @@
 # 可以通过文本编辑器进行编辑，也可以通过程序进行解析。YML文件格式是一种以层级缩进的方式表示程序数据结构的格式。
 # 在数据表示方面比XML等格式更加简洁清晰易读。YML文件格式通常以“.yml”为扩展名。
 
-#Spring相关配置
+# Spring 相关配置
 spring:
-  #数据库配置
+  # 数据库配置（使用环境变量覆盖）
   datasource:
-    url: jdbc:mysql://localhost:3306/DB_School_trade?serverTimezone=UTC&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT&allowPublicKeyRetrieval=true&useSSL=false
-    username: root
-    password: 123456
+    url: ${DATABASE_URL:jdbc:mysql://localhost:3306/DB_School_trade?serverTimezone=UTC&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true}
+    username: ${DATABASE_USERNAME:root}
+    password: ${DATABASE_PASSWORD:admin}
     driver-class-name: com.mysql.cj.jdbc.Driver
-  #web文件限制配置
+
+  # 文件上传限制
   servlet:
     multipart:
-     enabled: true
-     max-file-size: 200MB
-     max-request-size: 200MB
-  #Json配置
+      enabled: true
+      max-file-size: 200MB
+      max-request-size: 200MB
+
+  # JSON 时间格式
   jackson:
-    time: GMT+8
+    time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
 
-#文件路径
-baseUrl: http://localhost:8080
-#C:/exam/xxx/pic  注意这个文件夹路径最好不要有中文，容易出问题！！
-userFilePath: C:\Users\Administrator\Desktop\校园二手交易平台\源码\pic
+# 后端服务基础 URL（用于生成图片链接等）
+# 本地开发默认 localhost，线上由环境变量提供
+baseUrl: ${BASE_URL:http://localhost:8080}
 
-#Mybatis配置
+# 文件存储路径
+# 注意：Render 等平台是临时文件系统，重启会清空！不能存永久文件。
+# 建议：图片等静态资源应上传到云存储（如阿里云 OSS、腾讯云 COS）或使用数据库 BLOB（不推荐大文件）
+userFilePath: ${USER_FILE_PATH:/tmp/pic}
+
+# MyBatis 配置
 mybatis:
-  typeAliasesPackage: com.shanzhu.st.entity
-  mapperLocations: classpath:mapper/*.xml
+  type-aliases-package: com.shanzhu.st.entity
+  mapper-locations: classpath:mapper/*.xml
