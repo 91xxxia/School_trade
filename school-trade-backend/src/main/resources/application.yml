@@ -29,8 +29,6 @@ spring:
 baseUrl: ${BASE_URL:http://localhost:8080}
 
 # 文件存储路径
-# 注意：Render 等平台是临时文件系统，重启会清空！不能存永久文件。
-# 建议：图片等静态资源应上传到云存储（如阿里云 OSS、腾讯云 COS）或使用数据库 BLOB（不推荐大文件）
 userFilePath: ${USER_FILE_PATH:/tmp/pic}
 
 # MyBatis 配置
