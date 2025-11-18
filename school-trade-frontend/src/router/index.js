@@ -1,5 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import PrivateConversations from '../components/page/private-conversations.vue';
+import PrivateMessage from '../components/page/private-message.vue';
 
 const originalReplace = Router.prototype.replace;
 Router.prototype.replace = function replace(location) {
@@ -14,6 +16,18 @@ Vue.use(Router);
 
 export default new Router({
     routes: [
+        {
+                path: '/private-conversations',
+                name: 'private-conversations',
+                component: PrivateConversations
+        },
+
+        {
+                path: '/private-message',
+                name: 'private-message',
+                component: PrivateMessage
+        },
+
         {
             path: '/',
             redirect: '/index'

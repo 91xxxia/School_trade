@@ -14,6 +14,14 @@
                             <div class="details-header-user-info-time">{{idleItemInfo.user.signInTime.substring(0,10)}} 加入平台</div>
                         </div>
                     </div>
+                    <div class="details-header-user-info-actions">
+                        <el-button
+                            type="primary"
+                            plain
+                            @click="sendPrivateMessage(idleItemInfo.userId)">
+                            私信卖家
+                        </el-button>
+                    </div>
                     <div class="details-header-buy" :style="'width:'+(isMaster?'150px;':'280px;')">
                         <div style="color: red;font-size: 18px;font-weight: 600;">￥{{idleItemInfo.idlePrice}}</div>
                         <div v-if="!isMaster&&idleItemInfo.idleStatus!==1" style="color: red;font-size: 16px;">闲置已下架或删除</div>
@@ -306,7 +314,15 @@
                 }else{
                     this.$message.error("留言为空！");
                 }
-            }
+            },
+
+            // 发送私信给卖家
+                    sendPrivateMessage(targetUserId) {
+                        this.$router.push({
+                            path: '/private-message',
+                            query: { targetUserId: targetUserId }
+                        });
+                    }
         },
     }
 </script>
@@ -333,6 +349,11 @@
         font-weight: 600;
         font-size: 18px;
         margin-bottom: 10px;
+    }
+
+
+    .details-header-user-info-actions {
+        margin-top: 10px;
     }
 
     .details-header-user-info-time {

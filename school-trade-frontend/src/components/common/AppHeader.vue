@@ -14,6 +14,15 @@
                     <el-button slot="append" icon="el-icon-search" @click="searchIdle"></el-button>
                 </el-input>
             </div>
+            <el-dropdown @command="handleDropdownCommand">
+                <div class="header-icon">
+                    <i class="el-icon-chat-line-round"></i>
+                    <span v-if="unreadCount > 0" class="unread-badge">{{ unreadCount }}</span>
+                </div>
+                <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item command="messages">私信消息</el-dropdown-item>
+                </el-dropdown-menu>
+            </el-dropdown>
             <el-button type="primary" icon="el-icon-plus"  @click="toRelease">物品发布</el-button>
             <el-button type="primary" icon="el-icon-chat-dot-round" @click="toMessage">消息</el-button>
             <router-link v-if="!isLogin" class="user-name-text" to="/login">登录</router-link>
@@ -40,7 +49,8 @@
                 searchValue: this.searchInput,
                 nickname:'登录',
                 avatar:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-                isLogin:false
+                isLogin:false,
+                unreadCount: 0
             };
         },
         created(){
@@ -61,6 +71,7 @@
                 this.avatar=this.$globalData.userInfo.avatar;
                 this.isLogin=true;
             }
+            this.loadUnreadCount();
         },
         methods: {
             searchIdle() {
@@ -102,7 +113,39 @@
                     }
                 });
 
-            }
+            },
+
+            // 加载未读消息数量
+                    loadUnreadCount() {
+                        const userId = this.getCookie('shUserId');
+                        if (userId) {
+                            this.$api.getUnreadMessageCount().then(res => {
+                                if (res.status_code === 1) {
+                                    this.unreadCount = res.data;
+                                }
+                            }).catch(() => {
+                                console.error('获取未读消息数量失败');
+                            });
+                        }
+                    },
+
+                    // 处理下拉菜单命令
+                    handleDropdownCommand(command) {
+                        if (command === 'messages') {
+                            this.$router.push('/private-conversations');
+                        }
+                    },
+
+                    // 获取Cookie方法（如果没有的话添加）
+                    getCookie(cname) {
+                        const name = cname + "=";
+                        const ca = document.cookie.split(';');
+                        for(let i = 0; i < ca.length; i++) {
+                            const c = ca[i].trim();
+                            if (c.indexOf(name) === 0) return c.substring(name.length, c.length);
+                        }
+                        return "";
+                    }
         }
     };
 </script>
@@ -144,5 +187,26 @@
         color: #409EFF;
         cursor: pointer;
         text-decoration: none;
+    }
+
+    .header-icon {
+        position: relative;
+        margin-left: 20px;
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+    .unread-badge {
+        position: absolute;
+        top: -5px;
+        right: -10px;
+        background-color: #ff4d4f;
+        color: white;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        font-size: 12px;
+        text-align: center;
+        line-height: 18px;
     }
 </style>

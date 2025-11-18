@@ -129,6 +129,7 @@ CREATE TABLE `sh_message` (
   `create_time` datetime NOT NULL COMMENT '留言时间',
   `to_user` bigint NOT NULL COMMENT '所回复的用户',
   `to_message` bigint DEFAULT NULL COMMENT '所回复的留言',
+  `message_type` tinyint DEFAULT 0 COMMENT '0-留言 1-私聊',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `user_id_index` (`user_id`) USING BTREE,
   KEY `idle_id_index` (`idle_id`) USING BTREE,
@@ -139,11 +140,11 @@ CREATE TABLE `sh_message` (
 -- Records of sh_message
 -- ----------------------------
 BEGIN;
-INSERT INTO `sh_message` VALUES (48, 11, 112, '多少钱', '2024-01-05 14:26:48', 11, NULL);
-INSERT INTO `sh_message` VALUES (49, 11, 111, '这个可以便宜点么？', '2024-01-05 14:27:03', 11, NULL);
-INSERT INTO `sh_message` VALUES (50, 11, 111, '可以', '2024-01-05 14:27:19', 11, 49);
-INSERT INTO `sh_message` VALUES (51, 11, 107, '东西怎么买啊？人在哪？', '2024-01-06 00:32:51', 11, NULL);
-INSERT INTO `sh_message` VALUES (52, 11, 105, '东西怎么买？', '2024-01-06 00:33:54', 11, NULL);
+INSERT INTO `sh_message` VALUES (48, 11, 112, '多少钱', '2024-01-05 14:26:48', 11, NULL, 0);
+INSERT INTO `sh_message` VALUES (49, 11, 111, '这个可以便宜点么？', '2024-01-05 14:27:03', 11, NULL, 0);
+INSERT INTO `sh_message` VALUES (50, 11, 111, '可以', '2024-01-05 14:27:19', 11, 49, 0);
+INSERT INTO `sh_message` VALUES (51, 11, 107, '东西怎么买啊？人在哪？', '2024-01-06 00:32:51', 11, NULL, 0);
+INSERT INTO `sh_message` VALUES (52, 11, 105, '东西怎么买？', '2024-01-06 00:33:54', 11, NULL, 0);
 COMMIT;
 
 -- ----------------------------
@@ -219,5 +220,21 @@ BEGIN;
 INSERT INTO `sh_user` VALUES (11, '18777777777', '123456', 'user', 'http://localhost:8080/image?imageName=file170446387201110031.jpg', '2024-01-05 13:20:06', NULL);
 INSERT INTO `sh_user` VALUES (12, '18888888888', '123456', 'user2', 'http://localhost:8080/image?imageName=file170446508583010132.jpg', '2024-01-05 14:29:24', NULL);
 COMMIT;
+
+-- ----------------------------
+-- Table structure for private_message (新增用户私信表)
+-- ----------------------------
+CREATE TABLE `private_message` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+  `sender_id` bigint NOT NULL COMMENT '发送者ID',
+  `receiver_id` bigint NOT NULL COMMENT '接收者ID',
+  `content` varchar(500) NOT NULL COMMENT '私信内容',
+  `send_time` datetime NOT NULL COMMENT '发送时间',
+  `is_read` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否已读',
+  PRIMARY KEY (`id`),
+  KEY `idx_sender` (`sender_id`),
+  KEY `idx_receiver` (`receiver_id`),
+  KEY `idx_time` (`send_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户私信表';
 
 SET FOREIGN_KEY_CHECKS = 1;

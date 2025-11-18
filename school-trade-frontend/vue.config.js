@@ -14,13 +14,13 @@ module.exports = {
         ]
     },
     devServer: {
-        port: 8080, // 本地开发端口
+        port: 8081,  // 指定端口
         proxy: {
             '/api': {
-                target: 'http://localhost:8080', // 本地后端地址
+                target: 'http://localhost:8080',
                 changeOrigin: true,
                 pathRewrite: {
-                    '^/api': '' // 关键：删除 URL 中的 /api 前缀
+                    '^/api': ''  // 注意：这里应该去掉 /api 前缀，而不是替换为完整URL
                 }
             }
         }

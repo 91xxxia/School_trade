@@ -302,7 +302,49 @@ const api = {
             method: 'get',
             params: query
         });
-    }
+    },
+     // 发送私信
+        sendPrivateMessage(data) {
+            return request({
+                url: '/private-message/send',
+                method: 'post',
+                data: data
+            });
+        },
+
+        // 获取私信记录
+        getPrivateMessageRecords(query) {
+            return request({
+                url: '/private-message/records',
+                method: 'get',
+                params: query
+            });
+        },
+
+        // 获取未读私信数量
+        getUnreadMessageCount() {
+            return request({
+                url: '/private-message/unread/count',
+                method: 'get'
+            });
+        },
+
+        // 标记私信为已读
+        markMessagesAsRead(data) {
+            return request({
+                url: '/private-message/mark-read',
+                method: 'post',
+                data: data
+            });
+        },
+
+        // 获取私信会话列表
+        getPrivateConversations() {
+            return request({
+                url: '/private-message/conversations',
+                method: 'get'
+            });
+        }
 };
 
 
