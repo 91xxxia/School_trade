@@ -38,7 +38,7 @@ server:
 baseUrl: http://localhost:8080
 
 # 文件存储路径 - 注意使用正斜杠或双反斜杠
-userFilePath: E:\\IDEA_Java_Code\\CampusSecondhand-v2.0\\pic
+userFilePath: /opt/school-trade/uploads
 # 或者使用正斜杠
 # userFilePath: D:/校园二手交易平台/源码/pic
 
