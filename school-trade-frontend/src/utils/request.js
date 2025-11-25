@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const service = axios.create({
     timeout: 5000,
-    baseURL:  '/api',
+    baseURL: process.env.VUE_APP_BASE_API || '/api', // 使用环境变量或默认值
     withCredentials:  true
 });
 

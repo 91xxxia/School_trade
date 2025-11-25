@@ -35,10 +35,10 @@ server:
   connection-timeout: 30000
 
 # 文件路径配置
-baseUrl: http://localhost:8080
+baseUrl: http://47.98.173.43
 
 # 文件存储路径 - 注意使用正斜杠或双反斜杠
-userFilePath: /opt/school-trade/uploads
+userFilePath: /opt/school-trade/uploads/
 # 或者使用正斜杠
 # userFilePath: D:/校园二手交易平台/源码/pic
 
