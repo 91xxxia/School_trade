@@ -2,6 +2,7 @@ package com.shanzhu.st.mapper;
 
 import com.shanzhu.st.entity.IdleItem;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -40,4 +41,24 @@ public interface IdleItemMapper {
     int updateByPrimaryKey(IdleItem record);
 
     List<IdleItem> findIdleByList(List<Long> idList);
+
+    /**
+     * 根据ID列表查询商品
+     */
+    List<IdleItem> selectByIdList(@Param("idList") List<Long> idList);
+
+    /**
+     * 获取用户浏览过的商品ID
+     */
+    List<Long> selectBrowseHistoryByUserId(@Param("userId") Long userId);
+
+    /**
+     * 获取用户收藏的商品ID
+     */
+    List<Long> selectFavoriteItemsByUserId(@Param("userId") Long userId);
+
+    /**
+     * 更新商品浏览量
+     */
+    int updateViewCount(@Param("id") Long id, @Param("viewCount") Integer viewCount);
 }

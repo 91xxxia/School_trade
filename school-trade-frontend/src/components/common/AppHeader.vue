@@ -50,11 +50,11 @@
                 nickname:'登录',
                 avatar:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
                 isLogin:false,
-                unreadCount: 0
+                unreadCount: 0,
+                unreadPollingInterval: null // 添加轮询定时器
             };
         },
         created(){
-            // console.log("header");
             if(! this.$globalData.userInfo.nickname){
                 this.$api.getUserInfo().then(res=>{
                     console.log('Header getUserInfo:',res);
@@ -64,14 +64,21 @@
                         res.data.signInTime=res.data.signInTime.substring(0,10);
                         this.$globalData.userInfo=res.data;
                         this.isLogin=true;
+                        // 登录成功后开始轮询
+                        this.startUnreadPolling();
                     }
                 })
             }else {
                 this.nickname=this.$globalData.userInfo.nickname;
                 this.avatar=this.$globalData.userInfo.avatar;
                 this.isLogin=true;
+                // 已登录状态开始轮询
+                this.startUnreadPolling();
             }
-            this.loadUnreadCount();
+        },
+        beforeDestroy() {
+            // 组件销毁时停止轮询
+            this.stopUnreadPolling();
         },
         methods: {
             searchIdle() {
@@ -103,6 +110,8 @@
                     if(res.status_code===1){
                         this.$globalData.userInfo={};
                         console.log("login out");
+                        // 退出登录时停止轮询
+                        this.stopUnreadPolling();
                         if ('/index' === this.$route.path) {
                             this.$router.go(0);
                         }else {
@@ -116,36 +125,55 @@
             },
 
             // 加载未读消息数量
-                    loadUnreadCount() {
-                        const userId = this.getCookie('shUserId');
-                        if (userId) {
-                            this.$api.getUnreadMessageCount().then(res => {
-                                if (res.status_code === 1) {
-                                    this.unreadCount = res.data;
-                                }
-                            }).catch(() => {
-                                console.error('获取未读消息数量失败');
-                            });
+            loadUnreadCount() {
+                const userId = this.getCookie('shUserId');
+                if (userId) {
+                    this.$api.getUnreadMessageCount().then(res => {
+                        if (res.status_code === 1) {
+                            this.unreadCount = res.data;
                         }
-                    },
+                    }).catch(() => {
+                        console.error('获取未读消息数量失败');
+                    });
+                }
+            },
 
-                    // 处理下拉菜单命令
-                    handleDropdownCommand(command) {
-                        if (command === 'messages') {
-                            this.$router.push('/private-conversations');
-                        }
-                    },
+            // 开始未读消息轮询
+            startUnreadPolling() {
+                // 先立即加载一次
+                this.loadUnreadCount();
 
-                    // 获取Cookie方法（如果没有的话添加）
-                    getCookie(cname) {
-                        const name = cname + "=";
-                        const ca = document.cookie.split(';');
-                        for(let i = 0; i < ca.length; i++) {
-                            const c = ca[i].trim();
-                            if (c.indexOf(name) === 0) return c.substring(name.length, c.length);
-                        }
-                        return "";
-                    }
+                // 设置每1秒轮询一次
+                this.unreadPollingInterval = setInterval(() => {
+                    this.loadUnreadCount();
+                }, 1000);
+            },
+
+            // 停止未读消息轮询
+            stopUnreadPolling() {
+                if (this.unreadPollingInterval) {
+                    clearInterval(this.unreadPollingInterval);
+                    this.unreadPollingInterval = null;
+                }
+            },
+
+            // 处理下拉菜单命令
+            handleDropdownCommand(command) {
+                if (command === 'messages') {
+                    this.$router.push('/private-conversations');
+                }
+            },
+
+            // 获取Cookie方法
+            getCookie(cname) {
+                const name = cname + "=";
+                const ca = document.cookie.split(';');
+                for(let i = 0; i < ca.length; i++) {
+                    const c = ca[i].trim();
+                    if (c.indexOf(name) === 0) return c.substring(name.length, c.length);
+                }
+                return "";
+            }
         }
     };
 </script>

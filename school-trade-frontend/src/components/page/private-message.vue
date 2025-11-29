@@ -261,7 +261,29 @@ export default {
         formatTime(timeStr) {
             if (!timeStr) return '';
             const date = new Date(timeStr);
-            return `${this.padZero(date.getHours())}:${this.padZero(date.getMinutes())}`;
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            const messageDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+            let dateStr = '';
+
+            if (messageDate.getTime() === today.getTime()) {
+                // 今天：显示时间
+                dateStr = `${this.padZero(date.getHours())}:${this.padZero(date.getMinutes())}`;
+            } else if (messageDate.getTime() === yesterday.getTime()) {
+                // 昨天：显示昨天 + 时间
+                dateStr = `昨天 ${this.padZero(date.getHours())}:${this.padZero(date.getMinutes())}`;
+            } else if (now.getFullYear() === date.getFullYear()) {
+                // 今年：显示月日 + 时间
+                dateStr = `${date.getMonth() + 1}月${date.getDate()}日 ${this.padZero(date.getHours())}:${this.padZero(date.getMinutes())}`;
+            } else {
+                // 往年：显示年月日 + 时间
+                dateStr = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${this.padZero(date.getHours())}:${this.padZero(date.getMinutes())}`;
+            }
+
+            return dateStr;
         },
 
         // 补零

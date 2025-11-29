@@ -344,6 +344,42 @@ const api = {
                 url: '/private-message/conversations',
                 method: 'get'
             });
+        },
+
+        // 获取个性化推荐
+        getPersonalRecommend(query) {
+            return request({
+                url: '/recommend/personal',
+                method: 'get',
+                params: query
+            });
+        },
+
+        // 记录浏览历史
+        recordBrowseHistory(query) {
+            return request({
+                url: '/recommend/record/browse',
+                method: 'post',
+                params: query
+            });
+        },
+
+        // 检查用户推荐状态
+        checkUserRecommendationStatus(query) {
+            return request({
+                url: '/recommend/check',
+                method: 'get',
+                params: query
+            });
+        },
+
+        // 获取热门推荐
+        getHotRecommend(query) {
+            return request({
+                url: '/recommend/hot',
+                method: 'get',
+                params: query
+            });
         }
 };
 

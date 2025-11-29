@@ -68,6 +68,29 @@
     </foreach>
     order by id desc
   </select>
+    <!-- 在 IdleItemMapper.xml 中添加 -->
+    <select id="selectByIdList" resultType="com.shanzhu.st.entity.IdleItem">
+        SELECT * FROM sh_idle_item
+        WHERE id IN
+        <foreach collection="idList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND idle_status = 1
+    </select>
+
+    <select id="selectBrowseHistoryByUserId" resultType="java.lang.Long">
+        SELECT idle_id FROM user_browse_history
+        WHERE user_id = #{userId}
+        ORDER BY create_time DESC
+        LIMIT 100
+    </select>
+
+    <select id="selectFavoriteItemsByUserId" resultType="java.lang.Long">
+        SELECT idle_id FROM sh_favorite
+        WHERE user_id = #{userId}
+        ORDER BY create_time DESC
+    </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from sh_idle_item
     where id = #{id,jdbcType=BIGINT}
@@ -186,4 +209,9 @@
       user_id = #{userId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+    <update id="updateViewCount">
+        UPDATE sh_idle_item SET view_count = #{viewCount} WHERE id = #{id}
+    </update>
+
 </mapper>

@@ -1,45 +1,24 @@
+// 文件: PageVo.java (增强版)
 package com.shanzhu.st.vo;
 
+import lombok.Data;
 import java.util.List;
 
-public class PageVo <E>{
-    private List<E> list;
-    private int count;
+@Data
+public class PageVo<T> {
+    private List<T> list;
+    private Integer count;
+    private String message; // 新增：推荐消息
 
-    public PageVo() {
-    }
-
-    public PageVo(List<E> list, int count) {
+    public PageVo(List<T> list, Integer count) {
         this.list = list;
         this.count = count;
+        this.message = "推荐成功";
     }
 
-    public List<E> getList() {
-        return list;
-    }
-
-    public void setList(List<E> list) {
+    public PageVo(List<T> list, Integer count, String message) {
         this.list = list;
-    }
-
-    public int getCount() {
-        return count;
-    }
-
-    public void setCount(int count) {
         this.count = count;
+        this.message = message;
     }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("{");
-        sb.append("\"list\":")
-                .append(list);
-        sb.append(",\"count\":")
-                .append(count);
-        sb.append('}');
-        return sb.toString();
-    }
-
-
 }

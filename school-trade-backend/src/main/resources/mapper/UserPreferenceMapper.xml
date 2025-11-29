@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanzhu.st.mapper.UserPreferenceMapper">
+
+    <insert id="insertOrUpdate" parameterType="com.shanzhu.st.entity.UserPreference">
+        INSERT INTO user_preference (user_id, label_id, preference_score, update_time)
+        VALUES (#{userId}, #{labelId}, #{preferenceScore}, NOW())
+        ON DUPLICATE KEY UPDATE
+        preference_score = preference_score + VALUES(preference_score),
+        update_time = NOW()
+    </insert>
+
+    <select id="selectByUserId" resultType="com.shanzhu.st.entity.UserPreference">
+        SELECT * FROM user_preference WHERE user_id = #{userId}
+    </select>
+
+    <delete id="deleteByUserId">
+        DELETE FROM user_preference WHERE user_id = #{userId}
+    </delete>
+</mapper>
