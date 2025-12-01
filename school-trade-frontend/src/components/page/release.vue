@@ -9,6 +9,21 @@
                               maxlength="30"
                               show-word-limit>
                     </el-input>
+                    <div class="release-description-header">
+                        <div class="release-description-label">物品描述</div>
+                        <div class="release-ai-actions">
+                            <el-button
+                                    type="success"
+                                    plain
+                                    size="mini"
+                                    :loading="aiLoading"
+                                    :disabled="aiLoading || !imgList.length"
+                                    @click="handleAIDescription">
+                                AI帮写描述
+                            </el-button>
+                            <span class="release-ai-hint">需先上传商品图片</span>
+                        </div>
+                    </div>
                     <el-input
                             class="release-idle-detiles-text"
                             type="textarea"
@@ -66,7 +81,7 @@
                         </el-upload>
                         <div class="picture-list">
                             <el-image style="width: 600px;height:400px; margin-bottom: 2px;" fit="contain"
-                                      v-for="(img,index) in imgList" :src="img"
+                                      v-for="(img,index) in imgList" :key="index" :src="img"
                                       :preview-src-list="imgList"></el-image>
                         </div>
                         <el-dialog :visible.sync="imgDialogVisible">
@@ -88,6 +103,7 @@
     import AppBody from '../common/AppPageBody.vue'
     import AppFoot from '../common/AppFoot.vue'
     import options from '../common/country-data.js'
+    import { generateIdleDescription } from '../../api/ai';
 
     export default {
         name: "release",
@@ -103,6 +119,7 @@
                 showFileList:true,
                 options:options,
                 selectedOptions:[],
+                aiLoading:false,
                 options2: [{
                     value: 1,
                     label: '数码'
@@ -151,6 +168,26 @@
             fileHandleSuccess(response, file, fileList){
                 console.log("file:",response,file,fileList);
                 this.imgList.push(response.data);
+            },
+            async handleAIDescription(){
+                if(!this.imgList.length){
+                    this.$message.warning('请先上传至少一张图片再使用AI描写');
+                    return;
+                }
+                this.aiLoading=true;
+                try {
+                    const aiText = await generateIdleDescription(this.imgList);
+                    this.idleItemInfo.idleDetails = aiText;
+                    this.$message.success('已生成描述，可根据需要微调');
+                } catch (error) {
+                    const response = error && error.response;
+                    const respData = response && response.data;
+                    const respError = respData && respData.error;
+                    const tip = (respError && respError.message) || (error && error.message) || 'AI生成描述失败';
+                    this.$message.error(tip);
+                } finally {
+                    this.aiLoading=false;
+                }
             },
             releaseButton(){
                 this.idleItemInfo.pictureList=JSON.stringify(this.imgList);
@@ -234,5 +271,29 @@
         flex-direction: column;
         align-items: center;
         height: 100px;
+    }
+
+    .release-description-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .release-description-label {
+        color: #555555;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .release-ai-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .release-ai-hint {
+        color: #999999;
+        font-size: 12px;
     }
 </style>
