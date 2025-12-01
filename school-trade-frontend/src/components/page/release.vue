@@ -154,6 +154,21 @@
                     value: 4,
                     label: '图书'
                 }, {
+                    value: 6,
+                    label: '美妆'
+                }, {
+                    value: 7,
+                    label: '服饰'
+                }, {
+                    value: 8,
+                    label: '日用'
+                }, {
+                    value: 9,
+                    label: '学习'
+                }, {
+                    value: 10,
+                    label: '票务'
+                }, {
                     value: 5,
                     label: '其他'
                 }],
@@ -296,11 +311,18 @@
 
     ::v-deep .apple-textarea-borderless .el-textarea__inner {
         border: none;
-        background: transparent;
-        padding: 10px 0;
+        background-color: var(--color-bg-secondary);
+        border-radius: var(--radius-md);
+        padding: 12px;
         font-size: 16px;
         font-family: inherit;
         resize: none;
+        transition: all 0.3s ease;
+    }
+
+    ::v-deep .apple-textarea-borderless .el-textarea__inner:focus {
+        background-color: #fff;
+        box-shadow: 0 0 0 2px var(--color-brand-highlight);
     }
 
     .section-header {

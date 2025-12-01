@@ -1,5 +1,5 @@
 <template>
-    <canvas ref="canvas" class="particle-canvas" aria-hidden="true"></canvas>
+    <canvas ref="canvas" :class="['particle-canvas', theme === 'day' ? 'theme-day' : '']" aria-hidden="true"></canvas>
 </template>
 
 <script>
@@ -107,8 +107,8 @@ export default {
         },
         setCanvasSize() {
             if (!this.canvas) return;
-            this.canvas.width = window.innerWidth;
-            this.canvas.height = window.innerHeight;
+            this.canvas.width = this.canvas.clientWidth;
+            this.canvas.height = this.canvas.clientHeight;
         },
         resetScene() {
             this.coreParticles = [];
@@ -159,8 +159,10 @@ export default {
         },
         handleMouseMove(event) {
             const rect = this.canvas.getBoundingClientRect();
-            this.mouse.x = event.clientX - rect.left;
-            this.mouse.y = event.clientY - rect.top;
+            const scaleX = this.canvas.width / rect.width;
+            const scaleY = this.canvas.height / rect.height;
+            this.mouse.x = (event.clientX - rect.left) * scaleX;
+            this.mouse.y = (event.clientY - rect.top) * scaleY;
             this.mouse.active = true;
             if (this.mouseTimer) {
                 clearTimeout(this.mouseTimer);
@@ -178,8 +180,10 @@ export default {
         },
         handleClick(event) {
             const rect = this.canvas.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
+            const scaleX = this.canvas.width / rect.width;
+            const scaleY = this.canvas.height / rect.height;
+            const x = (event.clientX - rect.left) * scaleX;
+            const y = (event.clientY - rect.top) * scaleY;
             const layers = this.reduceMotion ? 1 : 3;
             for (let i = 0; i < layers; i += 1) {
                 this.ripples.push({
@@ -336,6 +340,11 @@ export default {
     height: 100%;
     z-index: 0;
     mix-blend-mode: lighten;
+}
+
+.particle-canvas.theme-day {
+    mix-blend-mode: normal;
+    opacity: 0.8;
 }
 
 @media (prefers-reduced-motion: reduce) {

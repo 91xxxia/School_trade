@@ -2,36 +2,45 @@
     <div>
         <app-head></app-head>
         <app-body>
-            <div class="conversation-container">
-                <div class="conversation-title">私信会话</div>
+            <div class="conversation-container app-container">
+                <div class="page-header">
+                    <h1 class="conversation-title">私信会话</h1>
+                </div>
 
                 <!-- 会话列表 -->
-                <div v-for="(conversation, index) in conversations"
-                     :key="index"
-                     class="conversation-item"
-                     @click="enterConversation(conversation)">
+                <div class="conversation-list">
+                    <div v-for="(conversation, index) in conversations"
+                         :key="index"
+                         class="conversation-card"
+                         @click="enterConversation(conversation)">
 
-                    <el-image
-                        class="avatar"
-                        :src="getOtherUser(conversation).avatar"
-                        fit="cover">
-                    </el-image>
-
-                    <div class="conversation-info">
-                        <div class="user-info">
-                            <span class="nickname">{{ getOtherUser(conversation).nickname }}</span>
-                            <span class="time">{{ formatTime(conversation.sendTime) }}</span>
+                        <div class="card-left">
+                            <el-avatar 
+                                :size="56" 
+                                :src="getOtherUser(conversation).avatar" 
+                                class="user-avatar">
+                            </el-avatar>
+                            <div class="conversation-info">
+                                <div class="user-row">
+                                    <span class="nickname">{{ getOtherUser(conversation).nickname }}</span>
+                                    <span class="time">{{ formatTime(conversation.sendTime) }}</span>
+                                </div>
+                                <div class="message-preview">
+                                    <span class="content-text">{{ conversation.content }}</span>
+                                    <span v-if="!conversation.isRead" class="unread-dot"></span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="last-message">
-                            <span>{{ conversation.content }}</span>
-                            <span v-if="!conversation.isRead" class="unread-badge">新</span>
+                        
+                        <div class="card-right">
+                            <i class="el-icon-arrow-right arrow-icon"></i>
                         </div>
                     </div>
                 </div>
 
                 <!-- 空状态 -->
                 <div v-if="conversations.length === 0" class="empty-state">
-                    暂无私信会话
+                    <el-empty description="暂无私信会话"></el-empty>
                 </div>
             </div>
             <app-foot></app-foot>
@@ -125,78 +134,122 @@ export default {
 <style scoped>
 .conversation-container {
     min-height: 85vh;
-    padding: 20px;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.page-header {
+    margin-bottom: 32px;
 }
 
 .conversation-title {
-    font-size: 20px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0;
 }
 
-.conversation-item {
+.conversation-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.conversation-card {
     display: flex;
     align-items: center;
-    padding: 15px 0;
-    border-bottom: 1px solid #eee;
+    justify-content: space-between;
+    padding: 20px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
 }
 
-.conversation-item:hover {
-    background-color: #f9f9f9;
+.conversation-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.05);
 }
 
-.avatar {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    margin-right: 15px;
-}
-
-.conversation-info {
+.card-left {
+    display: flex;
+    align-items: center;
     flex: 1;
     overflow: hidden;
 }
 
-.user-info {
+.user-avatar {
+    flex-shrink: 0;
+    margin-right: 16px;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.conversation-info {
+    flex: 1;
+    min-width: 0;
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 5px;
+    flex-direction: column;
+    gap: 4px;
 }
 
-.nickname {
-    font-weight: 600;
-    font-size: 16px;
-}
-
-.time {
-    font-size: 12px;
-    color: #999;
-}
-
-.last-message {
+.user-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 14px;
-    color: #666;
+    margin-bottom: 2px;
 }
 
-.unread-badge {
-    background-color: #ff4d4f;
-    color: white;
-    border-radius: 10px;
-    padding: 2px 6px;
-    font-size: 12px;
-    margin-left: 10px;
+.nickname {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.time {
+    font-size: 13px;
+    color: var(--color-text-tertiary);
+    margin-right: 16px;
+}
+
+.message-preview {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.content-text {
+    font-size: 15px;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90%;
+}
+
+.unread-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--color-danger);
+    border-radius: 50%;
+    margin-right: 16px;
+}
+
+.card-right {
+    padding-left: 16px;
+}
+
+.arrow-icon {
+    color: var(--color-text-tertiary);
+    font-size: 18px;
 }
 
 .empty-state {
+    padding: 60px 0;
     text-align: center;
-    padding: 50px 0;
-    color: #999;
-    font-size: 16px;
 }
 </style>

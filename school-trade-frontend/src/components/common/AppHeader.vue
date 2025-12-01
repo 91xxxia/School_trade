@@ -14,20 +14,17 @@
             </div>
             
             <div class="header-actions">
-                <el-dropdown @command="handleDropdownCommand" class="action-item">
-                    <div class="header-icon-btn">
-                        <i class="el-icon-chat-line-round"></i>
-                        <span v-if="unreadCount > 0" class="unread-badge">{{ unreadCount }}</span>
-                    </div>
-                    <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item command="messages">私信消息</el-dropdown-item>
-                    </el-dropdown-menu>
-                </el-dropdown>
-
                 <el-button type="primary" icon="el-icon-plus" class="apple-btn-primary action-item" @click="toRelease" round>发布</el-button>
-                <el-button plain icon="el-icon-chat-dot-round" class="apple-btn-secondary action-item" @click="toMessage" round>消息</el-button>
                 
-                <router-link v-if="!isLogin" class="login-link" to="/login">登录</router-link>
+                <el-button plain icon="el-icon-chat-dot-round" class="apple-btn-secondary action-item" @click="toMessage" round>留言</el-button>
+                
+                <div class="action-item relative-container">
+                    <el-button plain icon="el-icon-chat-line-round" class="apple-btn-secondary" @click="toPrivateMessage" round>私信</el-button>
+                    <span v-if="unreadCount > 0" class="unread-badge-btn">{{ unreadCount }}</span>
+                </div>
+
+                <el-button v-if="!isLogin" plain class="apple-btn-secondary action-item" @click="$router.push('/login')" round>登录</el-button>
+
                 <el-dropdown trigger="click" v-else class="user-dropdown">
                     <div class="user-profile">
                         <span class="user-name">{{nicknameValue?nicknameValue:nickname}}</span>
@@ -106,6 +103,11 @@
             toRelease(){
                 if ('/release' !== this.$route.path) {
                     this.$router.push({path: '/release'});
+                }
+            },
+            toPrivateMessage(){
+                if ('/private-conversations' !== this.$route.path) {
+                    this.$router.push({path: '/private-conversations'});
                 }
             },
             loginOut(){
@@ -319,5 +321,26 @@
     ::v-deep .el-input__inner:focus {
         background-color: #fff !important;
         box-shadow: 0 0 0 2px var(--color-brand-highlight) !important;
+    }
+
+    .relative-container {
+        position: relative;
+    }
+
+    .unread-badge-btn {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background-color: var(--color-danger);
+        color: white;
+        border-radius: 10px;
+        min-width: 18px;
+        height: 18px;
+        font-size: 11px;
+        text-align: center;
+        line-height: 18px;
+        padding: 0 4px;
+        border: 2px solid #fff;
+        z-index: 10;
     }
 </style>

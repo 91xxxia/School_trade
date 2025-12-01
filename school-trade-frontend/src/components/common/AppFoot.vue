@@ -1,6 +1,6 @@
 <template>
     <div class="foot-container">
-        <div class="author">© 2025 校园二手交易平台 · Designed by Apple Style</div>
+        <div class="author">© 2025 校园二手交易平台 · Designed by 哈基米队</div>
     </div>
 </template>
 

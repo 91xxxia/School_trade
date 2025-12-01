@@ -106,7 +106,7 @@ export async function generateIdleDescription(imageUrls) {
         .trim();
 
     if (!aiText) {
-        throw new Error('AI 未返回有效描述');
+        throw new Error('AI 未返回有效描述，这个图片可能不是二手物品');
     }
 
     return aiText;

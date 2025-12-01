@@ -2,26 +2,39 @@
     <div>
         <app-head></app-head>
         <app-body>
-            <div class="message-container">
-                <div class="message-container-title">我的消息</div>
-                <div v-for="(mes,index) in meslist" class="message-container-list" @click="toDetails(mes.idle.id)">
-                    <div class="message-container-list-left">
-                        <el-image
-                                style="width: 55px; height: 55px;border-radius: 5px;"
-                                :src="mes.fromU.avatar"
-                                fit="cover"></el-image>
-                        <div class="message-container-list-text">
-                            <div class="message-nickname">{{mes.fromU.nickname}}</div>
-                            <div class="message-content">{{mes.content}}</div>
-                            <div class="message-time">{{mes.createTime}}</div>
+            <div class="message-container app-container">
+                <div class="page-header">
+                    <h1 class="message-title">我的留言</h1>
+                </div>
+                
+                <div class="message-list">
+                    <div v-for="(mes,index) in meslist" :key="index" class="message-card" @click="toDetails(mes.idle.id)">
+                        <div class="card-left">
+                            <el-avatar 
+                                :size="56" 
+                                :src="mes.fromU.avatar" 
+                                class="user-avatar">
+                            </el-avatar>
+                            <div class="message-info">
+                                <div class="user-row">
+                                    <span class="nickname">{{mes.fromU.nickname}}</span>
+                                    <span class="time">{{mes.createTime}}</span>
+                                </div>
+                                <div class="content-text">{{mes.content}}</div>
+                            </div>
+                        </div>
+                        <div class="card-right">
+                            <el-image
+                                class="idle-image"
+                                :src="mes.idle.imgUrl"
+                                fit="cover">
+                            </el-image>
                         </div>
                     </div>
-                    <div class="message-container-list-right">
-                        <el-image
-                                style="width:130px; height: 90px;"
-                                :src="mes.idle.imgUrl"
-                                fit="contain"></el-image>
-                    </div>
+                </div>
+
+                <div v-if="meslist.length === 0" class="empty-state">
+                    <el-empty description="暂无留言消息"></el-empty>
                 </div>
             </div>
             <app-foot></app-foot>
@@ -73,52 +86,111 @@
 </script>
 
 <style scoped>
-    .message-container{
-        min-height: 85vh;
-        padding: 0 20px;
-    }
-    .message-container-title{
-        font-size: 16px;
-        padding: 20px 0;
-        font-weight: 600;
-    }
-    .message-container-list{
-        cursor:pointer;
-        height: 110px;
-        border-top: 1px solid #eeeeee;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .message-container-list-left{
-        width: 800px;
-        display: flex;
-    }
-    .message-container-list-right{
-        width: 130px;
-    }
-    .message-container-list-text{
-        margin-left: 10px;
-    }
-    .message-nickname{
-        font-weight: 600;
-        font-size: 18px;
-        padding-bottom: 5px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-    .message-content{
-        font-size: 16px;
-        padding-bottom: 15px;
-        color: #555555;
-        width: 710px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-    .message-time{
-        font-size: 13px;
-        color: #555555;
-    }
+.message-container {
+    min-height: 85vh;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.page-header {
+    margin-bottom: 32px;
+}
+
+.message-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0;
+}
+
+.message-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.message-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.message-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.05);
+}
+
+.card-left {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    overflow: hidden;
+    margin-right: 20px;
+}
+
+.user-avatar {
+    flex-shrink: 0;
+    margin-right: 16px;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.message-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.user-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 2px;
+}
+
+.nickname {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.time {
+    font-size: 13px;
+    color: var(--color-text-tertiary);
+}
+
+.content-text {
+    font-size: 15px;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-right {
+    flex-shrink: 0;
+}
+
+.idle-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.empty-state {
+    padding: 60px 0;
+    text-align: center;
+}
 </style>

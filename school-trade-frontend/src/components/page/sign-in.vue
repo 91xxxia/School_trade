@@ -145,29 +145,20 @@ export default {
             showPassword: false,
             showPasswordConfirm: false,
             authLoading: false,
-            themeMode: 'day',
-            themeTimer: null
+            themeMode: 'day'
         };
     },
     computed: {
         themeClass() {
-            return this.themeMode === 'day' ? 'theme-day' : 'theme-night';
+            return 'theme-day';
         }
     },
     mounted() {
-        this.updateThemeMode();
-        this.themeTimer = setInterval(this.updateThemeMode, 60000);
+        // Force day theme
     },
     beforeDestroy() {
-        if (this.themeTimer) {
-            clearInterval(this.themeTimer);
-        }
     },
     methods: {
-        updateThemeMode() {
-            const hour = new Date().getHours();
-            this.themeMode = hour >= 6 && hour < 18 ? 'day' : 'night';
-        },
         togglePassword(type) {
             if (type === 'confirm') {
                 this.showPasswordConfirm = !this.showPasswordConfirm;

@@ -11,6 +11,11 @@
                         <el-tab-pane label="家电" name="2"></el-tab-pane>
                         <el-tab-pane label="户外" name="3"></el-tab-pane>
                         <el-tab-pane label="图书" name="4"></el-tab-pane>
+                        <el-tab-pane label="美妆" name="6"></el-tab-pane>
+                        <el-tab-pane label="服饰" name="7"></el-tab-pane>
+                        <el-tab-pane label="日用" name="8"></el-tab-pane>
+                        <el-tab-pane label="学习" name="9"></el-tab-pane>
+                        <el-tab-pane label="票务" name="10"></el-tab-pane>
                         <el-tab-pane label="其他" name="5"></el-tab-pane>
                     </el-tabs>
                 </div>
@@ -304,6 +309,10 @@
         border-bottom: none;
     }
 
+    ::v-deep .el-tabs__active-bar {
+        display: none;
+    }
+
     ::v-deep .el-tabs__nav-wrap::after {
         display: none;
     }
@@ -331,6 +340,20 @@
         background-color: #fff;
         color: var(--color-text-primary);
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        position: relative;
+    }
+
+    /* Custom Active Bar (Small Blue Bar) */
+    ::v-deep .el-tabs__item.is-active::after {
+        content: "";
+        position: absolute;
+        bottom: 3px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 16px;
+        height: 3px;
+        background-color: var(--color-brand);
+        border-radius: 10px;
     }
 
     ::v-deep .el-tabs__item:hover:not(.is-active) {
@@ -349,7 +372,15 @@
         padding: 0; /* Override default padding for image */
         overflow: hidden;
         cursor: pointer;
-        background: #fff;
+        background: var(--color-bg-content);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-card);
+        transition: var(--transition-fast);
+    }
+
+    .idle-card:hover {
+        transform: translateY(var(--hover-translate-y));
+        box-shadow: var(--shadow-hover);
     }
 
     .card-image-wrapper {

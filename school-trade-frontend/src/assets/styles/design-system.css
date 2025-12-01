@@ -5,7 +5,8 @@
 
 :root {
   /* --- Color Palette --- */
-  --color-bg-primary: #FFFFFF;
+  --color-bg-primary: #F5F5F7; /* Apple 浅灰背景 */
+  --color-bg-content: #FFFFFF; /* 内容白背景 */
   --color-bg-secondary: #F5F5F7; /* 浅灰背景，用于胶囊、卡片背景等 */
   --color-bg-tertiary: #E5E5EA; /* 深一点的灰色，用于分割或禁用 */
   
@@ -113,7 +114,7 @@ ul, li {
 
 /* Cards */
 .apple-card {
-  background: #fff;
+  background: var(--color-bg-content);
   border-radius: var(--radius-lg);
   padding: var(--spacing-md);
   box-shadow: var(--shadow-card);
