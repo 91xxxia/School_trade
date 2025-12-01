@@ -6,6 +6,8 @@
 <style>
     html, body, #app{
         overflow: visible;
-        background-color: #f6f6f6;
+        background-color: var(--color-bg-primary);
+        font-family: var(--font-family-base);
+        color: var(--color-text-primary);
     }
 </style>

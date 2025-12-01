@@ -1,6 +1,6 @@
 <template>
     <div class="foot-container">
-        <div class="author">校园二手交易平台</div>
+        <div class="author">© 2025 校园二手交易平台 · Designed by Apple Style</div>
     </div>
 </template>
 
@@ -15,12 +15,15 @@
         width: 100%;
         display: flex;
         justify-content: center;
-        height: 40px;
-        padding-top: 10px;
+        align-items: center;
+        height: 80px;
+        margin-top: 40px;
+        background-color: var(--color-bg-secondary);
     }
 
     .author {
-        color: #999999;
-        font-size: 14px;
+        color: var(--color-text-secondary);
+        font-size: 13px;
+        font-weight: 400;
     }
 </style>

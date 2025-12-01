@@ -3,197 +3,194 @@
         <app-head :nickname-value="userInfo.nickname"
                   :avatarValue="userInfo.avatar"></app-head>
         <app-body>
-            <div v-show="!eidtAddress">
-                <div class="user-info-container">
-                    <div class="user-info-details">
-
-                        <el-upload
-                                action="/api/file"
-                                :on-success="fileHandleSuccess"
-                                :file-list="imgFileList"
-                                accept="image/*"
-                        >
-                            <el-image
-                                    style="width: 120px; height: 120px;border-radius: 10px;"
-                                    :src="userInfo.avatar"
-                                    fit="contain"></el-image>
-                        </el-upload>
-                        <div class="user-info-details-text">
-                            <div class="user-info-details-text-nickname">{{userInfo.nickname}}</div>
-                            <div class="user-info-details-text-time">{{userInfo.signInTime}} 加入平台</div>
-                            <div class="user-info-details-text-edit">
-                                <el-button type="primary" plain @click="userInfoDialogVisible = true">编辑个人信息</el-button>
+            <div class="me-container app-container">
+                <div v-show="!eidtAddress">
+                    <div class="user-profile-card apple-card">
+                        <div class="user-info-section">
+                            <el-upload
+                                    class="avatar-uploader"
+                                    action="/api/file"
+                                    :on-success="fileHandleSuccess"
+                                    :file-list="imgFileList"
+                                    accept="image/*"
+                                    :show-file-list="false">
+                                <div class="avatar-wrapper">
+                                    <el-image
+                                            class="user-avatar"
+                                            :src="userInfo.avatar"
+                                            fit="cover">
+                                        <div slot="error" class="image-slot">
+                                            <i class="el-icon-user-solid"></i>
+                                        </div>
+                                    </el-image>
+                                    <div class="avatar-overlay">
+                                        <i class="el-icon-camera"></i>
+                                    </div>
+                                </div>
+                            </el-upload>
+                            <div class="user-details">
+                                <div class="user-nickname text-h2">{{userInfo.nickname}}</div>
+                                <div class="user-meta text-small">{{userInfo.signInTime}} 加入平台</div>
+                                <el-button type="text" class="edit-profile-btn" @click="userInfoDialogVisible = true">编辑个人信息</el-button>
                             </div>
-                            <el-dialog
-                                    @close="finishEdit"
-                                    title="编辑个人信息"
-                                    :visible.sync="userInfoDialogVisible"
-                                    width="400px">
-                                <div class="edit-tip">昵称</div>
+                        </div>
+                        <div class="user-actions">
+                            <el-button type="primary" plain class="apple-btn-secondary" @click="eidtAddress=true">管理收货地址</el-button>
+                        </div>
+                    </div>
+
+                    <el-dialog
+                            @close="finishEdit"
+                            title="编辑个人信息"
+                            :visible.sync="userInfoDialogVisible"
+                            width="400px"
+                            custom-class="apple-dialog">
+                        <div class="edit-form">
+                            <div class="form-item">
+                                <div class="form-label">昵称</div>
                                 <el-input
                                         v-model="userInfo.nickname"
                                         :disabled="notUserNicknameEdit"
-                                        @change="saveUserNickname">
-                                    <el-button slot="append" type="warning" icon="el-icon-edit"
-                                               @click="notUserNicknameEdit = false">编辑
-                                    </el-button>
+                                        class="apple-input-group">
+                                    <el-button slot="append" icon="el-icon-edit" @click="notUserNicknameEdit = false"></el-button>
                                 </el-input>
+                            </div>
 
-                                <div v-if="userPasswordEdit">
-                                    <div class="edit-tip">原密码</div>
-                                    <el-input v-model="userPassword1" show-password></el-input>
-                                    <div class="edit-tip">新密码</div>
-                                    <el-input v-model="userPassword2" show-password></el-input>
-                                    <div class="edit-tip">确认新密码</div>
-                                    <el-input v-model="userPassword3" show-password></el-input>
-                                    <div class="edit-tip"></div>
-                                    <el-button @click="savePassword" plain>确认修改</el-button>
+                            <div v-if="userPasswordEdit" class="password-edit-area">
+                                <div class="form-item">
+                                    <div class="form-label">原密码</div>
+                                    <el-input v-model="userPassword1" show-password class="apple-input"></el-input>
                                 </div>
-                                <div v-else>
-                                    <div class="edit-tip">密码</div>
-                                    <el-input
-                                            value="123456"
-                                            :disabled="true"
-                                            show-password>
-                                        <el-button slot="append" type="warning" icon="el-icon-edit"
-                                                   @click="userPasswordEdit = true">编辑
-                                        </el-button>
-                                    </el-input>
+                                <div class="form-item">
+                                    <div class="form-label">新密码</div>
+                                    <el-input v-model="userPassword2" show-password class="apple-input"></el-input>
                                 </div>
-                                <span slot="footer" class="dialog-footer">
-                                <el-button @click="userInfoDialogVisible=false">完成</el-button>
-                            </span>
-                            </el-dialog>
+                                <div class="form-item">
+                                    <div class="form-label">确认新密码</div>
+                                    <el-input v-model="userPassword3" show-password class="apple-input"></el-input>
+                                </div>
+                                <el-button type="primary" class="apple-btn-primary full-width" @click="savePassword">确认修改</el-button>
+                            </div>
+                            <div v-else class="form-item">
+                                <div class="form-label">密码</div>
+                                <el-input
+                                        value="******"
+                                        :disabled="true"
+                                        class="apple-input-group">
+                                    <el-button slot="append" icon="el-icon-edit" @click="userPasswordEdit = true">修改</el-button>
+                                </el-input>
+                            </div>
                         </div>
-                    </div>
-                    <div class="user-info-splace">
-                        <el-button type="primary" plain @click="eidtAddress=true">编辑收货地址</el-button>
-                    </div>
-                </div>
-                <div class="idle-container">
-                    <el-tabs v-model="activeName" @tab-click="handleClick">
-                        <el-tab-pane label="我发布的" name="1"></el-tab-pane>
-                        <el-tab-pane label="我下架的" name="2"></el-tab-pane>
-                        <el-tab-pane label="我收藏的" name="3"></el-tab-pane>
-                        <el-tab-pane label="我卖出的" name="4"></el-tab-pane>
-                        <el-tab-pane label="我买到的" name="5"></el-tab-pane>
-                    </el-tabs>
-                    <div class="idle-container-list">
-                        <div v-for="(item,index) in dataList[activeName-1]" class="idle-container-list-item">
-                            <div class="idle-container-list-item-detile" @click="toDetails(activeName,item)">
-                                <el-image
-                                        style="width: 100px; height: 100px;"
-                                        :src="item.imgUrl"
-                                        fit="cover">
-                                    <div slot="error" class="image-slot">
-                                        <i class="el-icon-picture-outline">无图</i>
-                                    </div>
-                                </el-image>
-                                <div class="idle-container-list-item-text">
-                                    <div class="idle-container-list-title">
-                                        {{item.idleName}}
-                                    </div>
-                                    <div class="idle-container-list-idle-details" v-html="item.idleDetails">
-                                        {{item.idleDetails}}
-                                    </div>
-                                    <div class="idle-container-list-idle-time">{{item.timeStr}}</div>
+                        <span slot="footer" class="dialog-footer">
+                            <el-button type="primary" class="apple-btn-primary" @click="userInfoDialogVisible=false">完成</el-button>
+                        </span>
+                    </el-dialog>
 
-                                    <div class="idle-item-foot">
-                                        <div class="idle-prive">￥{{item.idlePrice}}
-                                            {{(activeName==='4'||activeName==='5')?orderStatus[item.orderStatus]:''}}
+                    <div class="content-tabs-container">
+                        <el-tabs v-model="activeName" @tab-click="handleClick" class="apple-tabs">
+                            <el-tab-pane label="我发布的" name="1"></el-tab-pane>
+                            <el-tab-pane label="我下架的" name="2"></el-tab-pane>
+                            <el-tab-pane label="我收藏的" name="3"></el-tab-pane>
+                            <el-tab-pane label="我卖出的" name="4"></el-tab-pane>
+                            <el-tab-pane label="我买到的" name="5"></el-tab-pane>
+                        </el-tabs>
+                        
+                        <div class="item-list">
+                            <div v-for="(item,index) in dataList[activeName-1]" :key="index" class="item-card apple-card" @click="toDetails(activeName,item)">
+                                <div class="item-image-wrapper">
+                                    <el-image
+                                            class="item-image"
+                                            :src="item.imgUrl"
+                                            fit="cover">
+                                        <div slot="error" class="image-slot">
+                                            <i class="el-icon-picture-outline"></i>
                                         </div>
-                                        <el-button v-if="activeName!=='4'&&activeName!=='5'" type="danger" size="mini" slot="reference"
-                                                   plain @click.stop="handle(activeName,item,index)">{{handleName[activeName-1]}}
-                                        </el-button>
+                                    </el-image>
+                                </div>
+                                <div class="item-content">
+                                    <div class="item-header">
+                                        <div class="item-title text-h3">{{item.idleName}}</div>
+                                        <div class="item-price">￥{{item.idlePrice}}</div>
+                                    </div>
+                                    <div class="item-desc text-small">{{item.idleDetails}}</div>
+                                    <div class="item-footer">
+                                        <div class="item-time text-small">{{item.timeStr}}</div>
+                                        <div class="item-status" v-if="activeName==='4'||activeName==='5'">
+                                            <el-tag size="small" effect="plain">{{orderStatus[item.orderStatus]}}</el-tag>
+                                        </div>
+                                        <div class="item-actions" v-if="activeName!=='4'&&activeName!=='5'">
+                                            <el-button type="danger" plain size="small" class="apple-btn-danger-plain" @click.stop="handle(activeName,item,index)">
+                                                {{handleName[activeName-1]}}
+                                            </el-button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            <el-empty v-if="dataList[activeName-1].length === 0" description="暂无数据"></el-empty>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div v-show="eidtAddress" class="address-container">
-                <el-page-header class="address-container-back" @back="eidtAddress=false"
-                                content="收货地址"></el-page-header>
-                <div class="address-container-add">
-                    <div class="address-container-add-title">新增收货地址</div>
-                    <div class="address-container-add-item">
-                        <el-input placeholder="请输入收货人姓名" v-model="addressInfo.consigneeName" maxlength="10"
-                                  show-word-limit>
-                            <div slot="prepend">收货人姓名</div>
-                        </el-input>
-                    </div>
-                    <div class="address-container-add-item">
-                        <el-input placeholder="请输入收货人手机号" v-model="addressInfo.consigneePhone"
-                                  onkeyup="this.value=this.value.replace(/[^\d.]/g,'');" maxlength="11" show-word-limit>
-                            <div slot="prepend">手机号</div>
-                        </el-input>
-                    </div>
 
-                    <div class="address-container-add-item">
-                        <span class="demonstration">省/市/区</span>
-                        <el-cascader
-                                :options="options"
-                                v-model="selectedOptions"
-                                @change="handleAddressChange"
-                                :separator="' '"
-                        >
-                        </el-cascader>
+                <div v-show="eidtAddress" class="address-edit-container">
+                    <div class="page-header-wrapper">
+                        <el-page-header @back="eidtAddress=false" content="收货地址管理"></el-page-header>
                     </div>
-                    <div class="address-container-add-item">
-                        <el-input placeholder="请输入详细地址（如道路、门牌号、小区、楼栋号等信息）" v-model="addressInfo.detailAddress"
-                                  maxlength="50" show-word-limit>
-                            <div slot="prepend">详细地址</div>
-                        </el-input>
-                    </div>
-                    <el-checkbox v-model="addressInfo.defaultFlag">设置为默认地址</el-checkbox>
-                    <el-button style="margin-left: 20px;" @click="saveAddress">保存</el-button>
-                </div>
-                <div class="address-container-list">
-                    <div style="color: #409EFF;font-size: 15px;padding-left: 10px;">已有收货地址</div>
-                    <el-table
-                            stripe
-                            :data="addressData"
-                            style="width: 100%">
-                        <el-table-column
-                                prop="consigneeName"
-                                label="收货人姓名"
-                                width="100">
-                        </el-table-column>
-                        <el-table-column
-                                prop="consigneePhone"
-                                label="手机号"
-                                width="120">
-                        </el-table-column>
-                        <el-table-column
-                                prop="detailAddressText"
-                                label="地址"
-                                width="270">
-                        </el-table-column>
-                        <el-table-column label="操作">
-                            <template slot-scope="scope">
-                                <el-button
-                                        size="mini"
-                                        @click="handleEdit(scope.$index, scope.row)">编辑
-                                </el-button>
-                                <el-button
-                                        size="mini"
-                                        type="danger"
-                                        @click="handleDelete(scope.$index, scope.row)">删除
-                                </el-button>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="是否默认地址" width="110">
-                            <template slot-scope="scope">
-                                <el-button v-if="!scope.row.defaultFlag"
-                                           size="mini"
-                                           @click="handleSetDefault(scope.$index, scope.row)">设为默认
-                                </el-button>
-                                <div v-else style="padding-left: 10px;color: #409EFF;">{{scope.row.defaultAddress}}
+                    
+                    <div class="address-content-wrapper">
+                        <div class="address-form apple-card">
+                            <div class="card-title text-h3">新增地址</div>
+                            <div class="form-grid">
+                                <div class="form-item">
+                                    <div class="form-label">收货人</div>
+                                    <el-input v-model="addressInfo.consigneeName" maxlength="10" show-word-limit class="apple-input"></el-input>
                                 </div>
-                            </template>
-                        </el-table-column>
-                    </el-table>
+                                <div class="form-item">
+                                    <div class="form-label">手机号</div>
+                                    <el-input v-model="addressInfo.consigneePhone" maxlength="11" show-word-limit class="apple-input"></el-input>
+                                </div>
+                                <div class="form-item full-width">
+                                    <div class="form-label">地区</div>
+                                    <el-cascader
+                                            :options="options"
+                                            v-model="selectedOptions"
+                                            @change="handleAddressChange"
+                                            :separator="' / '"
+                                            class="full-width-cascader"
+                                    >
+                                    </el-cascader>
+                                </div>
+                                <div class="form-item full-width">
+                                    <div class="form-label">详细地址</div>
+                                    <el-input v-model="addressInfo.detailAddress" maxlength="50" show-word-limit class="apple-input"></el-input>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <el-checkbox v-model="addressInfo.defaultFlag">设为默认</el-checkbox>
+                                <el-button type="primary" class="apple-btn-primary" @click="saveAddress">保存地址</el-button>
+                            </div>
+                        </div>
+
+                        <div class="address-list apple-card">
+                            <div class="card-title text-h3">已保存地址</div>
+                            <el-table :data="addressData" style="width: 100%" :header-cell-style="{background:'#f5f5f7',color:'#1d1d1f'}">
+                                <el-table-column prop="consigneeName" label="收货人" width="100"></el-table-column>
+                                <el-table-column prop="consigneePhone" label="手机号" width="120"></el-table-column>
+                                <el-table-column prop="detailAddressText" label="地址"></el-table-column>
+                                <el-table-column label="状态" width="100">
+                                    <template slot-scope="scope">
+                                        <el-tag v-if="scope.row.defaultFlag" type="success" size="mini">默认</el-tag>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="操作" width="200" align="right">
+                                    <template slot-scope="scope">
+                                        <el-button type="text" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                                        <el-button type="text" size="small" class="text-danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                                        <el-button v-if="!scope.row.defaultFlag" type="text" size="small" @click="handleSetDefault(scope.$index, scope.row)">设为默认</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                    </div>
                 </div>
             </div>
             <app-foot></app-foot>
@@ -599,130 +596,292 @@
 </script>
 
 <style scoped>
-
-    .user-info-details {
-        display: flex;
-        height: 140px;
-        align-items: center;
-        margin: 20px 40px;
+    .me-container {
+        padding-top: 40px;
+        padding-bottom: 40px;
+        min-height: 85vh;
     }
 
-    .user-info-details-text {
-        margin-left: 20px;
-    }
-
-    .user-info-details-text-nickname {
-        font-size: 26px;
-        font-weight: 600;
-        margin: 10px 0;
-    }
-
-    .user-info-details-text-time {
-        font-size: 14px;
-        margin-bottom: 10px;
-    }
-
-    .user-info-splace {
-        margin-right: 90px;
-    }
-
-    .idle-container {
-        padding: 0 20px;
-    }
-
-    .idle-container-list {
-        min-height: 55vh;
-    }
-
-    .idle-container-list-item {
-        border-bottom: 1px solid #eeeeee;
-        cursor: pointer;
-    }
-
-    .idle-container-list-item:last-child {
-        border-bottom: none;
-    }
-
-    .idle-container-list-item-detile {
-        height: 120px;
-        display: flex;
-        align-items: center;
-    }
-
-    .idle-container-list-item-text {
-        margin-left: 10px;
-        height: 100px;
-        max-width: 800px;
-    }
-
-    .idle-container-list-title {
-        font-weight: 600;
-        font-size: 18px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-
-    .idle-container-list-idle-details {
-        font-size: 14px;
-        color: #555555;
-        padding-top: 5px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-
-    .idle-container-list-idle-time {
-        font-size: 13px;
-        padding-top: 5px;
-    }
-
-    .idle-prive {
-        font-size: 15px;
-        padding-top: 5px;
-        color: red;
-    }
-
-    .edit-tip {
-        font-size: 14px;
-        margin: 10px 5px;
-    }
-
-    .address-container {
-        padding: 10px 20px;
-    }
-
-    .address-container-back {
-        margin-bottom: 10px;
-    }
-
-    .address-container-add-title {
-        font-size: 15px;
-        color: #409EFF;
-        padding: 10px;
-    }
-
-    .address-container-add-item {
-        margin-bottom: 20px;
-    }
-
-    .demonstration {
-        color: #666666;
-        font-size: 14px;
-        padding: 10px;
-    }
-
-    .address-container-add {
-        padding: 0 200px;
-    }
-
-    .address-container-list {
-        padding: 30px 100px;
-    }
-
-    .idle-item-foot {
-        width: 800px;
+    .user-profile-card {
         display: flex;
         justify-content: space-between;
+        align-items: center;
+        padding: 40px;
+        margin-bottom: 32px;
+    }
+
+    .user-info-section {
+        display: flex;
+        align-items: center;
+    }
+
+    .avatar-wrapper {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        overflow: hidden;
+        cursor: pointer;
+        box-shadow: var(--shadow-glow);
+        border: 2px solid #fff;
+    }
+
+    .user-avatar {
+        width: 100%;
+        height: 100%;
+        transition: transform 0.3s ease;
+    }
+
+    .avatar-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.3);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .avatar-overlay i {
+        color: #fff;
+        font-size: 24px;
+    }
+
+    .avatar-wrapper:hover .avatar-overlay {
+        opacity: 1;
+    }
+
+    .avatar-wrapper:hover .user-avatar {
+        transform: scale(1.1);
+    }
+
+    .user-details {
+        margin-left: 24px;
+    }
+
+    .user-nickname {
+        margin-bottom: 8px;
+    }
+
+    .user-meta {
+        color: var(--color-text-secondary);
+        margin-bottom: 8px;
+    }
+
+    .edit-profile-btn {
+        padding: 0;
+        font-size: 14px;
+        color: var(--color-brand-highlight);
+    }
+
+    /* Tabs */
+    .content-tabs-container {
+        margin-top: 32px;
+    }
+
+    ::v-deep .el-tabs__header {
+        margin-bottom: 24px;
+    }
+
+    ::v-deep .el-tabs__nav-wrap::after {
+        display: none;
+    }
+
+    ::v-deep .el-tabs__active-bar {
+        background-color: var(--color-brand-highlight);
+        height: 2px;
+        border-radius: 2px;
+    }
+
+    ::v-deep .el-tabs__item {
+        font-size: 16px;
+        color: var(--color-text-secondary);
+        font-weight: 500;
+    }
+
+    ::v-deep .el-tabs__item.is-active {
+        color: var(--color-text-primary);
+        font-weight: 600;
+    }
+
+    /* Item List */
+    .item-list {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .item-card {
+        display: flex;
+        padding: 24px;
+        cursor: pointer;
+        transition: var(--transition-fast);
+    }
+
+    .item-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .item-image-wrapper {
+        width: 120px;
+        height: 120px;
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        flex-shrink: 0;
+        margin-right: 24px;
+    }
+
+    .item-image {
+        width: 100%;
+        height: 100%;
+        transition: transform 0.5s ease;
+    }
+
+    .item-card:hover .item-image {
+        transform: scale(1.05);
+    }
+
+    .item-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+    }
+
+    .item-title {
+        font-weight: 600;
+        color: var(--color-text-primary);
+        margin-right: 16px;
+    }
+
+    .item-price {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--color-brand-highlight);
+    }
+
+    .item-desc {
+        color: var(--color-text-secondary);
+        margin-bottom: 16px;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+        line-height: 1.5;
+    }
+
+    .item-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .item-time {
+        color: var(--color-text-tertiary);
+    }
+
+    /* Address Edit */
+    .address-edit-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .page-header-wrapper {
+        margin-bottom: 32px;
+    }
+
+    .address-content-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+    }
+
+    .address-form, .address-list {
+        padding: 32px;
+    }
+
+    .card-title {
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--color-bg-secondary);
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 24px;
+    }
+
+    .form-item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-item.full-width {
+        grid-column: span 2;
+    }
+
+    .form-label {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: var(--color-text-secondary);
+    }
+
+    .full-width-cascader {
+        width: 100%;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* Dialog */
+    .edit-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .password-edit-area {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding-top: 20px;
+        border-top: 1px solid var(--color-bg-secondary);
+    }
+
+    ::v-deep .apple-dialog {
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+    }
+
+    ::v-deep .apple-dialog .el-dialog__header {
+        padding: 20px;
+        border-bottom: 1px solid var(--color-bg-secondary);
+    }
+
+    ::v-deep .apple-dialog .el-dialog__body {
+        padding: 30px;
+    }
+
+    ::v-deep .apple-dialog .el-dialog__footer {
+        padding: 20px;
+        border-top: 1px solid var(--color-bg-secondary);
     }
 </style>

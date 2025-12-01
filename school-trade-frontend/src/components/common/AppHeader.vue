@@ -1,41 +1,44 @@
 <template>
-    <div class="header">
-        <div class="header-container">
+    <div class="header glass-effect">
+        <div class="header-container app-container">
             <div class="app-name">
-                <router-link to="/">
-                    <img src="../../assets/logo.png" style="width: 40px;position: relative; top: 13px;right: 6px">
-                    <b style="color: #e75c09" >
-                    校园二手交易平台
-                    </b>
+                <router-link to="/" class="logo-link">
+                    <img src="../../assets/logo.png" class="logo-img">
+                    <span class="logo-text">校园二手交易平台</span>
                 </router-link>
             </div>
             <div class="search-container">
-                <el-input placeholder="搜物品..." v-model="searchValue" @keyup.enter.native="searchIdle">
+                <el-input placeholder="搜索好物..." v-model="searchValue" @keyup.enter.native="searchIdle" class="apple-search-input">
                     <el-button slot="append" icon="el-icon-search" @click="searchIdle"></el-button>
                 </el-input>
             </div>
-            <el-dropdown @command="handleDropdownCommand">
-                <div class="header-icon">
-                    <i class="el-icon-chat-line-round"></i>
-                    <span v-if="unreadCount > 0" class="unread-badge">{{ unreadCount }}</span>
-                </div>
-                <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item command="messages">私信消息</el-dropdown-item>
-                </el-dropdown-menu>
-            </el-dropdown>
-            <el-button type="primary" icon="el-icon-plus"  @click="toRelease">物品发布</el-button>
-            <el-button type="primary" icon="el-icon-chat-dot-round" @click="toMessage">消息</el-button>
-            <router-link v-if="!isLogin" class="user-name-text" to="/login">登录</router-link>
-            <el-dropdown trigger="click" v-else>
-                <div style="cursor:pointer;display: flex;align-items: center;">
-                    <div style="font-size: 16px;color: #409EFF;padding-right: 5px;">{{nicknameValue?nicknameValue:nickname}}</div>
-                    <el-avatar :src="avatarValue?avatarValue:avatar"></el-avatar>
-                </div>
-                <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item><div @click="toMe">个人中心</div></el-dropdown-item>
-                    <el-dropdown-item divided style="color: red;"><div @click="loginOut">退出登录</div></el-dropdown-item>
-                </el-dropdown-menu>
-            </el-dropdown>
+            
+            <div class="header-actions">
+                <el-dropdown @command="handleDropdownCommand" class="action-item">
+                    <div class="header-icon-btn">
+                        <i class="el-icon-chat-line-round"></i>
+                        <span v-if="unreadCount > 0" class="unread-badge">{{ unreadCount }}</span>
+                    </div>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item command="messages">私信消息</el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+
+                <el-button type="primary" icon="el-icon-plus" class="apple-btn-primary action-item" @click="toRelease" round>发布</el-button>
+                <el-button plain icon="el-icon-chat-dot-round" class="apple-btn-secondary action-item" @click="toMessage" round>消息</el-button>
+                
+                <router-link v-if="!isLogin" class="login-link" to="/login">登录</router-link>
+                <el-dropdown trigger="click" v-else class="user-dropdown">
+                    <div class="user-profile">
+                        <span class="user-name">{{nicknameValue?nicknameValue:nickname}}</span>
+                        <el-avatar :src="avatarValue?avatarValue:avatar" size="small"></el-avatar>
+                    </div>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item><div @click="toMe">个人中心</div></el-dropdown-item>
+                        <el-dropdown-item divided><div @click="loginOut" style="color: var(--color-danger);">退出登录</div></el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+            </div>
         </div>
     </div>
 </template>
@@ -184,57 +187,137 @@
         left: 0;
         right: 0;
         width: 100%;
-        height: 58px;
-        background: #ffffff;
-        display: flex;
-        justify-content: center;
-        border-bottom: #eeeeee solid 2px;
+        height: 64px; /* Slightly taller for better breathing room */
+        background: rgba(255, 255, 255, 0.8); /* Fallback */
         z-index: 1000;
+        transition: var(--transition-base);
     }
 
     .header-container {
-        width: 1000px;
         height: 100%;
         display: flex;
         align-items: center;
         justify-content: space-between;
+        max-width: 1200px;
+        margin: 0 auto;
     }
 
-    .app-name a {
-        color: #409EFF;
-        font-size: 24px;
+    .logo-link {
+        display: flex;
+        align-items: center;
         text-decoration: none;
+    }
+
+    .logo-img {
+        width: 32px;
+        height: 32px;
+        margin-right: 8px;
+    }
+
+    .logo-text {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--color-text-primary);
+        letter-spacing: -0.5px;
     }
 
     .search-container {
-        width: 300px;
+        width: 360px;
+        transition: var(--transition-fast);
     }
-    .user-name-text{
-        font-size: 16px;
-        font-weight: 600;
-        color: #409EFF;
-        cursor: pointer;
-        text-decoration: none;
+    
+    .search-container:focus-within {
+        width: 400px;
     }
 
-    .header-icon {
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .action-item {
+        margin-left: 0 !important; /* Override Element UI margins if any */
+    }
+
+    .header-icon-btn {
         position: relative;
-        margin-left: 20px;
+        font-size: 24px;
+        color: var(--color-text-primary);
         cursor: pointer;
-        font-size: 18px;
+        padding: 8px;
+        border-radius: 50%;
+        transition: var(--transition-fast);
+    }
+
+    .header-icon-btn:hover {
+        background-color: var(--color-bg-secondary);
     }
 
     .unread-badge {
         position: absolute;
-        top: -5px;
-        right: -10px;
-        background-color: #ff4d4f;
+        top: 4px;
+        right: 4px;
+        background-color: var(--color-danger);
         color: white;
-        border-radius: 50%;
-        width: 18px;
-        height: 18px;
-        font-size: 12px;
+        border-radius: 10px;
+        min-width: 16px;
+        height: 16px;
+        font-size: 10px;
         text-align: center;
-        line-height: 18px;
+        line-height: 16px;
+        padding: 0 4px;
+        border: 2px solid #fff;
+    }
+
+    .login-link {
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--color-brand-highlight);
+        padding: 8px 16px;
+        border-radius: 20px;
+        transition: var(--transition-fast);
+    }
+
+    .login-link:hover {
+        background-color: var(--color-bg-secondary);
+    }
+
+    .user-profile {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        padding: 4px 8px 4px 12px;
+        border-radius: 20px;
+        transition: var(--transition-fast);
+    }
+
+    .user-profile:hover {
+        background-color: var(--color-bg-secondary);
+    }
+
+    .user-name {
+        font-size: 14px;
+        color: var(--color-text-primary);
+        margin-right: 8px;
+        font-weight: 500;
+    }
+    
+    /* Element UI Overrides for Header */
+    ::v-deep .el-input-group__append {
+        background-color: transparent;
+        border: none;
+        padding: 0 10px;
+    }
+    
+    ::v-deep .el-input__inner {
+        background-color: var(--color-bg-secondary) !important;
+        border: none !important;
+        border-radius: 20px !important; /* Capsule shape */
+    }
+    
+    ::v-deep .el-input__inner:focus {
+        background-color: #fff !important;
+        box-shadow: 0 0 0 2px var(--color-brand-highlight) !important;
     }
 </style>

@@ -2,94 +2,115 @@
     <div>
         <app-head></app-head>
         <app-body>
-            <div class="release-idle-container">
-                <div class="release-idle-container-title">物品发布</div>
-                <div class="release-idle-container-form">
-                    <el-input placeholder="请输入二手物品名称" v-model="idleItemInfo.idleName"
-                              maxlength="30"
-                              show-word-limit>
-                    </el-input>
-                    <div class="release-description-header">
-                        <div class="release-description-label">物品描述</div>
-                        <div class="release-ai-actions">
-                            <el-button
-                                    type="success"
-                                    plain
-                                    size="mini"
-                                    :loading="aiLoading"
-                                    :disabled="aiLoading || !imgList.length"
-                                    @click="handleAIDescription">
-                                AI帮写描述
-                            </el-button>
-                            <span class="release-ai-hint">需先上传商品图片</span>
-                        </div>
+            <div class="release-container app-container">
+                <div class="release-card apple-card">
+                    <div class="card-header">
+                        <h1 class="text-h2">发布闲置</h1>
+                        <p class="text-small">填写商品信息，让更多人看到你的好物</p>
                     </div>
-                    <el-input
-                            class="release-idle-detiles-text"
-                            type="textarea"
-                            autosize
-                            placeholder="请输入物品的详细介绍..."
-                            v-model="idleItemInfo.idleDetails"
-                            maxlength="1000"
-                            show-word-limit>
-                    </el-input>
-                    <div class="release-idle-place">
-                        <div class="release-tip">您的地区</div>
-                        <el-cascader
-                                :options="options"
-                                v-model="selectedOptions"
-                                @change="handleChange"
-                                :separator="' '"
-                                style="width: 90%;"
-                        >
-                        </el-cascader>
-                    </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <div>
-                            <div class="release-tip">物品类别</div>
-                            <el-select  v-model="idleItemInfo.idleLabel" placeholder="请选择类别">
-                                <el-option
-                                        v-for="item in options2"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value">
-                                </el-option>
-                            </el-select>
-                        </div>
-                        <div style="width: 300px;">
-                            <el-input-number v-model="idleItemInfo.idlePrice" :precision="2" :step="10" :max="10000000">
-                                <div slot="prepend">价格</div>
-                            </el-input-number>
+                    
+                    <div class="form-section">
+                        <div class="form-group">
+                            <el-input
+                                    placeholder="商品名称"
+                                    v-model="idleItemInfo.idleName"
+                                    maxlength="30"
+                                    show-word-limit
+                                    class="apple-input-borderless title-input">
+                            </el-input>
                         </div>
 
-                    </div>
-                    <div class="release-idle-container-picture">
-                        <div class="release-idle-container-picture-title">上传二手物品照片</div>
-                        <el-upload
-                                action="/api/file"
-                                :on-preview="fileHandlePreview"
-                                :on-remove="fileHandleRemove"
-                                :on-success="fileHandleSuccess"
-                                :show-file-list="showFileList"
-                                :limit="10"
-                                :on-exceed="handleExceed"
-                                accept="image/*"
-                                drag
-                                multiple>
-                            <i class="el-icon-upload"></i>
-                            <div class="el-upload__text">将图片拖到此处，或<em>点击上传</em></div>
-                        </el-upload>
-                        <div class="picture-list">
-                            <el-image style="width: 600px;height:400px; margin-bottom: 2px;" fit="contain"
-                                      v-for="(img,index) in imgList" :key="index" :src="img"
-                                      :preview-src-list="imgList"></el-image>
+                        <div class="form-group">
+                            <div class="section-header">
+                                <span class="section-label">商品描述</span>
+                                <div class="ai-actions">
+                                    <el-button
+                                            type="text"
+                                            class="ai-btn"
+                                            :loading="aiLoading"
+                                            :disabled="aiLoading || !imgList.length"
+                                            @click="handleAIDescription">
+                                        <i class="el-icon-magic-stick"></i> AI 帮写
+                                    </el-button>
+                                    <span class="ai-hint" v-if="!imgList.length">需先上传图片</span>
+                                </div>
+                            </div>
+                            <el-input
+                                    type="textarea"
+                                    :rows="6"
+                                    placeholder="描述一下宝贝的品牌型号、新旧程度、入手渠道等信息..."
+                                    v-model="idleItemInfo.idleDetails"
+                                    maxlength="1000"
+                                    show-word-limit
+                                    class="apple-textarea-borderless">
+                            </el-input>
                         </div>
-                        <el-dialog :visible.sync="imgDialogVisible">
-                            <img width="100%" :src="dialogImageUrl" alt="">
-                        </el-dialog>
-                    </div>
-                    <div style="display: flex;justify-content: center;margin-top: 30px;margin-bottom: 30px;">
-                        <el-button type="primary" plain @click="releaseButton">确认发布</el-button>
+
+                        <div class="form-row">
+                            <div class="form-group half-width">
+                                <div class="label-text">所在地区</div>
+                                <el-cascader
+                                        :options="options"
+                                        v-model="selectedOptions"
+                                        @change="handleChange"
+                                        :separator="' / '"
+                                        class="apple-cascader"
+                                        placeholder="选择地区"
+                                >
+                                </el-cascader>
+                            </div>
+                            <div class="form-group half-width">
+                                <div class="label-text">商品分类</div>
+                                <el-select v-model="idleItemInfo.idleLabel" placeholder="选择分类" class="apple-select">
+                                    <el-option
+                                            v-for="item in options2"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </div>
+                        </div>
+
+                        <div class="form-group price-group">
+                            <div class="label-text">价格</div>
+                            <el-input-number 
+                                v-model="idleItemInfo.idlePrice" 
+                                :precision="2" 
+                                :step="10" 
+                                :max="10000000"
+                                :controls="false"
+                                class="apple-input-number">
+                            </el-input-number>
+                            <span class="currency-symbol">￥</span>
+                        </div>
+
+                        <div class="form-group upload-group">
+                            <div class="label-text">商品图片</div>
+                            <el-upload
+                                    class="apple-upload"
+                                    action="/api/file"
+                                    :on-preview="fileHandlePreview"
+                                    :on-remove="fileHandleRemove"
+                                    :on-success="fileHandleSuccess"
+                                    :show-file-list="true"
+                                    :limit="10"
+                                    :on-exceed="handleExceed"
+                                    accept="image/*"
+                                    drag
+                                    multiple
+                                    list-type="picture-card">
+                                <i class="el-icon-camera"></i>
+                                <div class="el-upload__text">点击或拖拽上传</div>
+                            </el-upload>
+                            <el-dialog :visible.sync="imgDialogVisible">
+                                <img width="100%" :src="dialogImageUrl" alt="">
+                            </el-dialog>
+                        </div>
+
+                        <div class="form-actions">
+                            <el-button type="primary" class="apple-btn-primary submit-btn" @click="releaseButton">发布商品</el-button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -224,76 +245,209 @@
 </script>
 
 <style scoped>
-    .release-idle-container {
+    .release-container {
+        padding-top: 40px;
+        padding-bottom: 40px;
         min-height: 85vh;
     }
 
-    .release-idle-container-title {
-        font-size: 18px;
-        padding: 30px 0;
-        font-weight: 600;
-        width: 100%;
+    .release-card {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 40px;
+    }
+
+    .card-header {
         text-align: center;
+        margin-bottom: 40px;
     }
 
-    .release-idle-container-form {
-        padding: 0 180px;
+    .card-header h1 {
+        margin-bottom: 8px;
     }
 
-    .release-idle-detiles-text {
-        margin: 20px 0;
-    }
-    .release-idle-place{
-        margin-bottom: 15px;
-    }
-    .release-tip{
-        color: #555555;
-        float: left;
-        padding-right: 5px;
-        height: 36px;
-        line-height: 36px;
-        font-size: 14px;
-    }
-    .release-idle-container-picture{
-        width: 500px;
-        height: 400px;
-        margin: 20px 0;
-
-    }
-    .release-idle-container-picture-title{
-        margin: 10px 0;
-        color: #555555;
-        font-size: 14px;
-    }
-    .picture-list {
-        margin: 20px 0;
+    .form-section {
         display: flex;
         flex-direction: column;
-        align-items: center;
-        height: 100px;
+        gap: 32px;
     }
 
-    .release-description-header {
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Custom Input Styles */
+    ::v-deep .apple-input-borderless .el-input__inner {
+        border: none;
+        border-bottom: 1px solid var(--color-bg-tertiary);
+        border-radius: 0;
+        padding: 10px 0;
+        font-size: 24px;
+        font-weight: 600;
+        background: transparent;
+        transition: border-color 0.3s ease;
+    }
+
+    ::v-deep .apple-input-borderless .el-input__inner:focus {
+        border-bottom: 2px solid var(--color-brand-highlight);
+        box-shadow: none;
+    }
+
+    ::v-deep .apple-textarea-borderless .el-textarea__inner {
+        border: none;
+        background: transparent;
+        padding: 10px 0;
+        font-size: 16px;
+        font-family: inherit;
+        resize: none;
+    }
+
+    .section-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-top: 20px;
+        margin-bottom: 12px;
     }
 
-    .release-description-label {
-        color: #555555;
-        font-size: 14px;
+    .section-label {
         font-weight: 600;
+        font-size: 16px;
     }
 
-    .release-ai-actions {
+    .ai-actions {
         display: flex;
         align-items: center;
         gap: 8px;
     }
 
-    .release-ai-hint {
-        color: #999999;
+    .ai-btn {
+        color: var(--color-brand-highlight);
+        font-weight: 500;
+        padding: 0;
+    }
+
+    .ai-hint {
         font-size: 12px;
+        color: var(--color-text-secondary);
+    }
+
+    .form-row {
+        display: flex;
+        gap: 32px;
+    }
+
+    .half-width {
+        flex: 1;
+    }
+
+    .label-text {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--color-text-secondary);
+        margin-bottom: 8px;
+    }
+
+    ::v-deep .apple-cascader .el-input__inner,
+    ::v-deep .apple-select .el-input__inner {
+        border: 1px solid transparent;
+        background-color: var(--color-bg-secondary);
+        border-radius: var(--radius-md);
+    }
+
+    ::v-deep .apple-cascader .el-input__inner:focus,
+    ::v-deep .apple-select .el-input__inner:focus {
+        background-color: #fff;
+        box-shadow: 0 0 0 2px var(--color-brand-highlight);
+    }
+
+    .price-group {
+        position: relative;
+        width: 200px;
+    }
+
+    .currency-symbol {
+        position: absolute;
+        left: 12px;
+        top: 38px;
+        font-size: 18px;
+        color: var(--color-text-primary);
+        z-index: 10;
+    }
+
+    ::v-deep .apple-input-number {
+        width: 100%;
+    }
+
+    ::v-deep .apple-input-number .el-input__inner {
+        padding-left: 30px;
+        text-align: left;
+        border: 1px solid transparent;
+        background-color: var(--color-bg-secondary);
+        border-radius: var(--radius-md);
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--color-brand-highlight);
+    }
+
+    ::v-deep .apple-input-number .el-input__inner:focus {
+        background-color: #fff;
+        box-shadow: 0 0 0 2px var(--color-brand-highlight);
+    }
+
+    /* Upload */
+    .upload-group {
+        margin-top: 16px;
+    }
+
+    ::v-deep .apple-upload .el-upload--picture-card {
+        border: 1px dashed #d1d1d6;
+        background-color: #f9f9f9;
+        border-radius: var(--radius-lg);
+        width: 120px;
+        height: 120px;
+        line-height: 120px;
+    }
+
+    ::v-deep .apple-upload .el-upload-dragger {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: transparent;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    ::v-deep .apple-upload .el-upload-dragger .el-icon-camera {
+        font-size: 32px;
+        color: var(--color-text-secondary);
+        margin-bottom: 8px;
+    }
+
+    ::v-deep .apple-upload .el-upload__text {
+        font-size: 12px;
+        color: var(--color-text-secondary);
+        line-height: 1.2;
+    }
+
+    ::v-deep .apple-upload .el-upload-list--picture-card .el-upload-list__item {
+        width: 120px;
+        height: 120px;
+        border-radius: var(--radius-lg);
+        border: none;
+    }
+
+    .form-actions {
+        margin-top: 32px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .submit-btn {
+        width: 200px;
+        height: 48px;
+        font-size: 16px;
     }
 </style>

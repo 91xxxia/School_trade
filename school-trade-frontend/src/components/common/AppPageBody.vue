@@ -14,13 +14,13 @@
 
 <style scoped>
     .main-container{
-        margin-top: 67px;
-        display: flex;
-        justify-content: center;
+        padding-top: 64px; /* Match header height */
+        min-height: 100vh;
+        background-color: var(--color-bg-primary);
     }
     .main-content{
-        width: 1000px;
-        background-color: #ffffff;
-        min-height: 90vh;
+        width: 100%;
+        /* max-width: 1200px;  Let individual pages control their container width via .app-container */
+        margin: 0 auto;
     }
 </style>

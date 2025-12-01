@@ -1,126 +1,460 @@
 <template>
-    <div class="sign-in-container">
-        <el-card class="box-card">
-            <div class="sign-in-body">
-                <div class="sign-in-title">
-                    <img src="../../assets/logo.png" style="width: 40px;position: relative; top: 13px;right: 6px">
-                    <span style='color: #e75c09'>账号注册</span>
+    <div :class="['auth-container', themeClass]" role="main">
+        <particle-background :theme="themeMode" />
+        <div class="gradient-overlay" aria-hidden="true"></div>
+        <section class="auth-panel" aria-label="账号注册">
+            <header class="brand-lockup" @click="toLogin" role="button" tabindex="0" @keyup.enter="toLogin">
+                <img src="../../assets/logo.png" alt="平台 logo" class="brand-logo">
+                <div>
+                    <p class="brand-eyebrow">Create Your Campus Loop</p>
+                    <h1>创建新账户</h1>
+                    <p class="brand-subtitle">一分钟完成注册，加入智慧校园循环体系</p>
                 </div>
-                <el-input placeholder="请输入昵称..." maxlength="30"  v-model="userInfo.nickname" class="sign-in-input" clearable>
-                    <template slot="prepend">
-                        <div class="el-icon-user-solid"></div>
-                    </template>
-                </el-input>
-                <el-input placeholder="请输入帐号..." maxlength="11" v-model="userInfo.accountNumber" class="sign-in-input" clearable>
-                    <template slot="prepend">
-                        <div class="el-icon-phone"></div>
-                    </template>
-                </el-input>
-                <el-input placeholder="请输入密码..." show-password maxlength="16" v-model="userInfo.userPassword" class="sign-in-input" clearable>
-                    <template slot="prepend">
-                        <div class="el-icon-lock"></div>
-                    </template>
-                </el-input>
-                <el-input placeholder="请再次输入密码..." show-password maxlength="16" v-model="userPassword2" @keyup.enter.native="signIn" class="sign-in-input" clearable>
-                    <template slot="prepend">
-                        <div class="el-icon-lock"></div>
-                    </template>
-                </el-input>
-                <div class="sign-in-submit">
-                    <el-button type="primary" @click="signIn">提交</el-button>
-                    <el-button type="primary" @click="toLogin" style="margin-left: 20px" >返回登录</el-button>
+            </header>
+            <form class="form-body" @submit.prevent="signIn">
+                <label class="field">
+                    <span class="field-label">昵称</span>
+                    <div class="field-control">
+                        <span class="field-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <circle cx="12" cy="8" r="4" />
+                                <path d="M4 20c1.5-3 4.5-4.5 8-4.5s6.5 1.5 8 4.5" />
+                            </svg>
+                        </span>
+                        <input
+                                id="nickname"
+                                type="text"
+                                maxlength="30"
+                                v-model.trim="userInfo.nickname"
+                                placeholder="请输入昵称"
+                                required
+                        >
+                    </div>
+                </label>
+                <label class="field">
+                    <span class="field-label">账号</span>
+                    <div class="field-control">
+                        <span class="field-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M5 7h14M5 12h14M5 17h8" />
+                            </svg>
+                        </span>
+                        <input
+                                id="account"
+                                type="text"
+                                maxlength="11"
+                                autocomplete="username"
+                                v-model.trim="userInfo.accountNumber"
+                                placeholder="请输入账号"
+                                required
+                        >
+                    </div>
+                </label>
+                <label class="field">
+                    <span class="field-label">密码</span>
+                    <div class="field-control">
+                        <span class="field-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="4" y="10" width="16" height="10" rx="2" />
+                                <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+                            </svg>
+                        </span>
+                        <input
+                                id="password"
+                                :type="showPassword ? 'text' : 'password'"
+                                maxlength="16"
+                                autocomplete="new-password"
+                                v-model.trim="userInfo.userPassword"
+                                placeholder="请输入密码"
+                                required
+                        >
+                        <button type="button" class="ghost-icon" @click="togglePassword('main')" aria-label="切换密码可见性">
+                            <svg v-if="showPassword" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                            <svg v-else viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M3 3l18 18" />
+                                <path d="M10.6 10.6a1.5 1.5 0 0 0 2.8 2.8" />
+                                <path d="M9.9 5.1A10.94 10.94 0 0 1 12 5c6 0 10 7 10 7a18.14 18.14 0 0 1-3.06 4.26" />
+                                <path d="M6.2 6.2A18.55 18.55 0 0 0 2 12s4 7 10 7a10.94 10.94 0 0 0 2.9-.4" />
+                            </svg>
+                        </button>
+                    </div>
+                </label>
+                <label class="field">
+                    <span class="field-label">确认密码</span>
+                    <div class="field-control">
+                        <span class="field-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="4" y="10" width="16" height="10" rx="2" />
+                                <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+                            </svg>
+                        </span>
+                        <input
+                                id="passwordConfirm"
+                                :type="showPasswordConfirm ? 'text' : 'password'"
+                                maxlength="16"
+                                autocomplete="new-password"
+                                v-model.trim="userPassword2"
+                                placeholder="请再次输入密码"
+                                required
+                                @keyup.enter="signIn"
+                        >
+                        <button type="button" class="ghost-icon" @click="togglePassword('confirm')" aria-label="切换确认密码可见性">
+                            <svg v-if="showPasswordConfirm" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                            <svg v-else viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M3 3l18 18" />
+                                <path d="M10.6 10.6a1.5 1.5 0 0 0 2.8 2.8" />
+                                <path d="M9.9 5.1A10.94 10.94 0 0 1 12 5c6 0 10 7 10 7a18.14 18.14 0 0 1-3.06 4.26" />
+                                <path d="M6.2 6.2A18.55 18.55 0 0 0 2 12s4 7 10 7a10.94 10.94 0 0 0 2.9-.4" />
+                            </svg>
+                        </button>
+                    </div>
+                </label>
+                <div class="form-actions">
+                    <button type="submit" class="cta" :disabled="authLoading">
+                        <span>{{ authLoading ? '提交中...' : '完成注册' }}</span>
+                    </button>
+                    <button type="button" class="ghost-btn" @click="toLogin">返回登录</button>
                 </div>
-
-            </div>
-        </el-card>
+            </form>
+        </section>
     </div>
 </template>
 
 <script>
-    export default {
-        name: "sign-in",
-        data(){
-            return{
-                userPassword2:'',
-                userInfo:{
-                    accountNumber:'',
-                    userPassword:'',
-                    nickname:''
-                }
-            };
-        },
-        methods:{
-            toLogin(){
-                this.$router.replace({path: '/login'});
+import ParticleBackground from '../ui/ParticleBackground.vue';
+
+export default {
+    name: 'sign-in',
+    components: {
+        ParticleBackground
+    },
+    data() {
+        return {
+            userInfo: {
+                accountNumber: '',
+                userPassword: '',
+                nickname: ''
             },
-            signIn(){
-                console.log(this.userInfo.nickname);
-                if(this.userInfo.accountNumber&&this.userInfo.userPassword&&this.userInfo.nickname){
-                    if(this.userInfo.userPassword!==this.userPassword2){
-                        this.$message.error('两次输入的密码不相同！');
-                    }else {
-                        this.$api.signIn(this.userInfo).then(res=>{
-                            if(res.status_code===1){
-                                this.$message({
-                                    message: '注册成功！',
-                                    type: 'success'
-                                });
-                                this.$router.replace({path: '/login'});
-                            }else {
-                                this.$message.error('注册失败，用户已存！');
-                            }
-                        }).catch(e=>{
-                            console.log(e);
-                            this.$message.error('注册失败，网络异常！');
-                        })
-                    }
-                }else{
-                    this.$message.error('注册信息未填写完整！');
-                }
+            userPassword2: '',
+            showPassword: false,
+            showPasswordConfirm: false,
+            authLoading: false,
+            themeMode: 'day',
+            themeTimer: null
+        };
+    },
+    computed: {
+        themeClass() {
+            return this.themeMode === 'day' ? 'theme-day' : 'theme-night';
+        }
+    },
+    mounted() {
+        this.updateThemeMode();
+        this.themeTimer = setInterval(this.updateThemeMode, 60000);
+    },
+    beforeDestroy() {
+        if (this.themeTimer) {
+            clearInterval(this.themeTimer);
+        }
+    },
+    methods: {
+        updateThemeMode() {
+            const hour = new Date().getHours();
+            this.themeMode = hour >= 6 && hour < 18 ? 'day' : 'night';
+        },
+        togglePassword(type) {
+            if (type === 'confirm') {
+                this.showPasswordConfirm = !this.showPasswordConfirm;
+            } else {
+                this.showPassword = !this.showPassword;
             }
+        },
+        async signIn() {
+            if (this.authLoading) return;
+            if (!this.userInfo.nickname || !this.userInfo.accountNumber || !this.userInfo.userPassword || !this.userPassword2) {
+                this.$message.error('请完整填写注册信息');
+                return;
+            }
+            if (this.userInfo.userPassword !== this.userPassword2) {
+                this.$message.error('两次输入的密码不一致');
+                return;
+            }
+            this.authLoading = true;
+            try {
+                const res = await this.$api.signIn(this.userInfo);
+                if (res.status_code === 1) {
+                    this.$message.success('注册成功！');
+                    this.$router.replace({ path: '/login' });
+                } else {
+                    this.$message.error(res.msg || '注册失败，用户已存在');
+                }
+            } catch (error) {
+                this.$message.error('注册失败，网络异常');
+            } finally {
+                this.authLoading = false;
+            }
+        },
+        toLogin() {
+            this.$router.replace({ path: '/login' });
         }
     }
+};
 </script>
 
 <style scoped>
-    .sign-in-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        width: 100%;
-        background-color: #f1f1f1;
-        background: url("../../assets/login-back.png") center top / cover no-repeat;
-    }
+.auth-container {
+    position: relative;
+    min-height: 100vh;
+    padding: clamp(32px, 10vh, 120px) clamp(20px, 8vw, 120px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #e5e7eb;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
 
-    .sign-in-body {
-        padding: 30px;
-        width: 300px;
-        height: 100%;
-    }
+.auth-container.theme-day {
+    color: #1f2933;
+    background: #f8f9fa;
+}
 
-    .sign-in-title {
-        padding-bottom: 30px;
-        text-align: center;
-        font-weight: 600;
-        font-size: 20px;
-        color: #409EFF;
-    }
+.gradient-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 15% 20%, rgba(248, 113, 113, 0.35), transparent 55%),
+    radial-gradient(circle at 80% 5%, rgba(14, 165, 233, 0.35), transparent 45%);
+    mix-blend-mode: screen;
+    pointer-events: none;
+    z-index: 0;
+}
 
-    .sign-in-input {
-        margin-bottom: 20px;
+.auth-panel {
+    position: relative;
+    z-index: 1;
+    width: min(420px, 100%);
+    padding: clamp(32px, 5vw, 48px);
+    backdrop-filter: blur(12px);
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 32px;
+    box-shadow: 0 30px 80px rgba(15, 23, 42, 0.45);
+}
+
+.theme-day .auth-panel {
+    background: rgba(248, 249, 250, 0.85);
+    border-color: rgba(92, 106, 196, 0.2);
+    color: #1f2933;
+}
+
+.brand-lockup {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 36px;
+    cursor: pointer;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.brand-lockup:hover {
+    transform: translateY(-2px);
+    opacity: 0.95;
+}
+
+.brand-lockup:focus-visible {
+    outline: 2px solid rgba(99, 102, 241, 0.5);
+    outline-offset: 6px;
+}
+
+.brand-logo {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.45);
+}
+
+.brand-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.7;
+}
+
+.brand-lockup h1 {
+    font-size: clamp(24px, 3vw, 30px);
+    margin: 4px 0;
+}
+
+.brand-subtitle {
+    margin: 0;
+    font-size: 14px;
+    opacity: 0.78;
+}
+
+.form-body {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.field-label {
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.theme-day .field-label {
+    color: rgba(31, 41, 51, 0.75);
+}
+
+.field-control {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(15, 23, 42, 0.25);
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.theme-day .field-control {
+    background: rgba(255, 255, 255, 0.6);
+    border-color: rgba(92, 106, 196, 0.3);
+}
+
+.field-control::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 3px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #818cf8 0%, #c084fc 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.field-control:focus-within::before {
+    opacity: 1;
+}
+
+.field-control:focus-within {
+    border-color: rgba(129, 140, 248, 0.8);
+    box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+}
+
+.field-icon {
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.8);
+    margin-right: 10px;
+}
+
+.theme-day .field-icon {
+    color: rgba(51, 78, 104, 0.8);
+}
+
+.field-control input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font-size: 15px;
+    outline: none;
+}
+
+.ghost-icon {
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    transition: opacity 0.25s ease;
+}
+
+.ghost-icon:hover {
+    opacity: 0.7;
+}
+
+.form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 8px;
+}
+
+.cta {
+    border: none;
+    border-radius: 18px;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: #f8fafc;
+    background: linear-gradient(135deg, #5c6ac4, #8b5cf6);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 15px 30px rgba(91, 104, 196, 0.45);
+}
+
+.cta:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.cta:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 35px rgba(91, 104, 196, 0.55);
+}
+
+.ghost-btn {
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: transparent;
+    color: inherit;
+    padding: 12px;
+    cursor: pointer;
+    transition: border 0.2s ease, background 0.2s ease;
+}
+
+.theme-day .ghost-btn {
+    border-color: rgba(92, 106, 196, 0.4);
+}
+
+.ghost-btn:hover {
+    border-color: rgba(129, 140, 248, 0.6);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 600px) {
+    .auth-panel {
+        padding: 28px;
+        border-radius: 24px;
     }
-    .sign-in-submit{
-        margin-top: 20px;
-        display: flex;
-        justify-content: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
-    .login-container{
-        padding: 0 10px;
-    }
-    .login-text{
-        color: #409EFF;
-        font-size: 16px;
-        cursor:pointer;
-    }
+}
 </style>

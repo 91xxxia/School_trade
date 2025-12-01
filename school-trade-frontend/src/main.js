@@ -4,6 +4,7 @@ import router from './router';
 import ElementUI from 'element-ui';
 import $ from 'jquery'
 import 'element-ui/lib/theme-chalk/index.css';
+import './assets/styles/design-system.css';
 import 'babel-polyfill';
 
 import api from './api/index.js';

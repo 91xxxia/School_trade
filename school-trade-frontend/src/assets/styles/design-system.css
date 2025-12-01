@@ -1,0 +1,236 @@
+/* 
+ * Apple-style Design System for Campus Secondhand Trading Platform
+ * 遵循 Apple Human Interface Guidelines
+ */
+
+:root {
+  /* --- Color Palette --- */
+  --color-bg-primary: #FFFFFF;
+  --color-bg-secondary: #F5F5F7; /* 浅灰背景，用于胶囊、卡片背景等 */
+  --color-bg-tertiary: #E5E5EA; /* 深一点的灰色，用于分割或禁用 */
+  
+  --color-text-primary: #1d1d1f; /* Apple 官网正文黑 */
+  --color-text-secondary: #86868b; /* 辅助文字 */
+  --color-text-tertiary: #d2d2d7; /* 极淡文字 */
+
+  --color-brand: #0071e3; /* Apple Blue - 更接近官网的蓝色，用户要求 #5AC8FA 但 Apple 官网常用 #0066CC/#0071e3，这里遵循用户要求的 #5AC8FA 作为高亮，但正文链接可能需要深一点 */
+  --color-brand-highlight: #5AC8FA; /* 用户指定的品牌色 */
+  
+  --color-danger: #FF3B30;
+  --color-success: #34C759;
+  --color-warning: #FF9500;
+
+  /* --- Typography --- */
+  --font-family-base: -apple-system, BlinkMacSystemFont, "SF Pro SC", "Helvetica Neue", Arial, sans-serif;
+  
+  --font-size-h1: 40px; /* 大标题 */
+  --font-size-h2: 28px; /* 页面标题 */
+  --font-size-h3: 24px; /* 模块标题 */
+  --font-size-body: 17px; /* 正文 */
+  --font-size-small: 15px; /* 辅助 */
+  --font-size-caption: 13px; /* 说明 */
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* --- Spacing --- */
+  --spacing-unit: 8px;
+  --spacing-xs: 8px;
+  --spacing-sm: 16px;
+  --spacing-md: 24px;
+  --spacing-lg: 32px;
+  --spacing-xl: 40px;
+  --spacing-xxl: 80px;
+
+  /* --- Radius --- */
+  --radius-sm: 8px;
+  --radius-md: 12px; /* 按钮、输入框 */
+  --radius-lg: 20px; /* 卡片、模态框 */
+  --radius-full: 999px;
+
+  /* --- Shadows --- */
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.03);
+  --shadow-hover: 0 6px 24px rgba(0, 0, 0, 0.06);
+  --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.08);
+  --shadow-glow: 0 0 0 3px rgba(90, 200, 250, 0.2); /* 品牌色光晕 */
+
+  /* --- Transitions --- */
+  --transition-base: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  --transition-fast: all 0.2s ease-in-out;
+  --hover-translate-y: -2px;
+}
+
+/* --- Global Resets & Base Styles --- */
+body {
+  font-family: var(--font-family-base);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  line-height: 1.5;
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-brand-highlight);
+  transition: var(--transition-fast);
+}
+
+a:hover {
+  opacity: 0.8;
+}
+
+ul, li {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* --- Mixins (SCSS) --- */
+/* Note: Since this is a CSS file being imported, we can't use SCSS mixins directly in standard CSS imports unless configured. 
+   However, I will define utility classes that mimic mixins for usage in Vue templates. 
+   If the project uses SCSS loader, I can rename this to .scss and import it. 
+   Assuming SCSS is available given the user request.
+*/
+
+/* --- Utility Classes --- */
+
+/* Container */
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-xl);
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    padding: 0 var(--spacing-sm);
+  }
+}
+
+/* Cards */
+.apple-card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-card);
+  transition: var(--transition-fast);
+  border: none; /* No borders */
+}
+
+.apple-card:hover {
+  transform: translateY(var(--hover-translate-y));
+  box-shadow: var(--shadow-hover);
+}
+
+/* Buttons */
+.apple-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 24px;
+  border-radius: var(--radius-full); /* Capsule style or var(--radius-md) */
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  border: none;
+  outline: none;
+}
+
+.apple-btn-primary {
+  background-color: var(--color-brand-highlight);
+  color: #fff;
+}
+
+.apple-btn-primary:hover {
+  background-color: #4bb3e6; /* Slightly darker/adjusted */
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(90, 200, 250, 0.3);
+}
+
+.apple-btn-secondary {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-brand-highlight);
+}
+
+.apple-btn-secondary:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+/* Inputs */
+.apple-input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid transparent;
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
+  transition: var(--transition-fast);
+}
+
+.apple-input:focus {
+  background-color: #fff;
+  border-color: var(--color-brand-highlight); /* Or use box-shadow for glow */
+  box-shadow: 0 0 0 4px rgba(90, 200, 250, 0.1);
+  outline: none;
+}
+
+/* Typography Utilities */
+.text-h1 { font-size: var(--font-size-h1); font-weight: var(--font-weight-semibold); letter-spacing: -0.02em; }
+.text-h2 { font-size: var(--font-size-h2); font-weight: var(--font-weight-semibold); letter-spacing: -0.01em; }
+.text-h3 { font-size: var(--font-size-h3); font-weight: var(--font-weight-medium); }
+.text-body { font-size: var(--font-size-body); font-weight: var(--font-weight-regular); }
+.text-small { font-size: var(--font-size-small); color: var(--color-text-secondary); }
+
+/* Glassmorphism */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Element UI Overrides (Global) */
+.el-button {
+  border-radius: var(--radius-md) !important;
+  font-weight: var(--font-weight-medium) !important;
+  border: none !important;
+}
+
+.el-button--primary {
+  background-color: var(--color-brand-highlight) !important;
+  box-shadow: 0 4px 10px rgba(90, 200, 250, 0.3);
+}
+
+.el-button--primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.el-input__inner {
+  border-radius: var(--radius-md) !important;
+  background-color: var(--color-bg-secondary) !important;
+  border: none !important;
+  height: 44px !important;
+  line-height: 44px !important;
+}
+
+.el-input__inner:focus {
+  background-color: #fff !important;
+  box-shadow: 0 0 0 2px var(--color-brand-highlight) !important;
+}
+
+.el-card {
+  border-radius: var(--radius-lg) !important;
+  border: none !important;
+  box-shadow: var(--shadow-card) !important;
+}
+
+.el-card:hover {
+  box-shadow: var(--shadow-hover) !important;
+}

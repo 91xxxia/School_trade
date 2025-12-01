@@ -13,11 +13,21 @@ function arrayBufferToBase64(buffer) {
         }
         return window.btoa(binary);
     }
-    let result = '';
-    for (let i = 0; i < bytes.byteLength; i += 1) {
-        result += String.fromCharCode(bytes[i]);
+    if (typeof Buffer !== 'undefined') {
+        return Buffer.from(bytes).toString('base64');
     }
-    return Buffer.from(result, 'binary').toString('base64');
+    let binary = '';
+    for (let i = 0; i < bytes.byteLength; i += 1) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    if (typeof btoa === 'function') {
+        return btoa(binary);
+    }
+    const globalBtoa = typeof globalThis !== 'undefined' && globalThis.btoa;
+    if (typeof globalBtoa === 'function') {
+        return globalBtoa(binary);
+    }
+    throw new Error('当前环境不支持Base64转换');
 }
 
 async function ensureImageDataUrl(url) {

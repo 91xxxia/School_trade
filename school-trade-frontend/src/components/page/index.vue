@@ -2,84 +2,82 @@
     <div>
         <app-head></app-head>
         <app-body>
-            <div style="min-height: 85vh;">
-            <el-tabs v-model="labelName" type="card" @tab-click="handleClick">
-                <el-tab-pane label="全部" name="0"></el-tab-pane>
-                <!-- 新增推荐标签页 -->
-                <el-tab-pane label="推荐" name="recommend" v-if="isLogin"></el-tab-pane>
-                <el-tab-pane label="数码" name="1"></el-tab-pane>
-                <el-tab-pane label="家电" name="2"></el-tab-pane>
-                <el-tab-pane label="户外" name="3"></el-tab-pane>
-                <el-tab-pane label="图书" name="4"></el-tab-pane>
-                <el-tab-pane label="其他" name="5"></el-tab-pane>
-            </el-tabs>
-
-            <div style="margin: 0 20px;">
-                <el-row :gutter="30">
-                    <el-col :span="6" v-for="(idle,index) in idleList" :key="idle.id">
-                        <div class="idle-card" @click="toDetails(idle)">
-                            <el-image
-                                    style="width: 100%; height: 160px"
-                                    :src="idle.imgUrl"
-                                    fit="contain">
-                                <div slot="error" class="image-slot">
-                                    <i class="el-icon-picture-outline">无图</i>
-                                </div>
-                            </el-image>
-                            <div class="idle-title">
-                                {{idle.idleName}}
-                            </div>
-                            <el-row style="margin: 5px 10px;">
-                                <el-col :span="12">
-                                    <div class="idle-prive">￥{{idle.idlePrice}}</div>
-                                </el-col>
-                                <el-col :span="12">
-                                    <div class="idle-place">{{idle.idlePlace}}</div>
-                                </el-col>
-                            </el-row>
-                            <div class="user-info">
-                                <el-image
-                                        style="width: 30px; height: 30px"
-                                        :src="idle.user.avatar"
-                                        fit="contain">
-                                    <div slot="error" class="image-slot">
-                                        <i class="el-icon-picture-outline">无图</i>
-                                    </div>
-                                </el-image>
-                                <div class="user-nickname">{{idle.user.nickname}}</div>
-                            </div>
-                        </div>
-                    </el-col>
-                </el-row>
-
-                <!-- 空状态提示 -->
-                <div v-if="idleList.length === 0" class="empty-state">
-                    <el-empty :description="emptyDescription">
-                        <el-button
-                            v-if="labelName === 'recommend' && !isLogin"
-                            type="primary"
-                            @click="$router.push('/login')">
-                            立即登录
-                        </el-button>
-                        <el-button
-                            v-else-if="labelName === 'recommend' && isLogin"
-                            type="primary"
-                            @click="browseMoreItems">
-                            去浏览更多商品
-                        </el-button>
-                    </el-empty>
+            <div class="main-content app-container">
+                <div class="tabs-container">
+                    <el-tabs v-model="labelName" @tab-click="handleClick" class="apple-tabs">
+                        <el-tab-pane label="全部" name="0"></el-tab-pane>
+                        <el-tab-pane label="推荐" name="recommend" v-if="isLogin"></el-tab-pane>
+                        <el-tab-pane label="数码" name="1"></el-tab-pane>
+                        <el-tab-pane label="家电" name="2"></el-tab-pane>
+                        <el-tab-pane label="户外" name="3"></el-tab-pane>
+                        <el-tab-pane label="图书" name="4"></el-tab-pane>
+                        <el-tab-pane label="其他" name="5"></el-tab-pane>
+                    </el-tabs>
                 </div>
-            </div>
-            <div class="fenye" v-if="totalItem > 0">
-                <el-pagination
-                        background
-                        @current-change="handleCurrentChange"
-                        :current-page.sync="currentPage"
-                        :page-size="8"
-                        layout="prev, pager, next, jumper"
-                        :total="totalItem">
-                </el-pagination>
-            </div>
+
+                <div class="goods-list-container">
+                    <el-row :gutter="32">
+                        <el-col :xs="24" :sm="12" :md="8" :lg="6" v-for="(idle,index) in idleList" :key="idle.id" class="goods-col">
+                            <div class="idle-card apple-card" @click="toDetails(idle)">
+                                <div class="card-image-wrapper">
+                                    <el-image
+                                            class="card-image"
+                                            :src="idle.imgUrl"
+                                            fit="cover">
+                                        <div slot="error" class="image-slot">
+                                            <i class="el-icon-picture-outline"></i>
+                                        </div>
+                                    </el-image>
+                                </div>
+                                <div class="card-content">
+                                    <div class="idle-title text-h3">{{idle.idleName}}</div>
+                                    <div class="idle-info">
+                                        <div class="idle-price">
+                                            <span class="currency">￥</span>
+                                            <span class="amount">{{idle.idlePrice}}</span>
+                                        </div>
+                                        <div class="idle-place text-small">{{idle.idlePlace}}</div>
+                                    </div>
+                                    <div class="user-info">
+                                        <el-avatar :size="24" :src="idle.user.avatar" class="user-avatar"></el-avatar>
+                                        <span class="user-nickname text-small">{{idle.user.nickname}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </el-col>
+                    </el-row>
+
+                    <!-- 空状态提示 -->
+                    <div v-if="idleList.length === 0" class="empty-state">
+                        <el-empty :description="emptyDescription" :image-size="200">
+                            <el-button
+                                v-if="labelName === 'recommend' && !isLogin"
+                                type="primary"
+                                class="apple-btn-primary"
+                                @click="$router.push('/login')">
+                                立即登录
+                            </el-button>
+                            <el-button
+                                v-else-if="labelName === 'recommend' && isLogin"
+                                type="primary"
+                                class="apple-btn-primary"
+                                @click="browseMoreItems">
+                                去浏览更多商品
+                            </el-button>
+                        </el-empty>
+                    </div>
+                </div>
+                
+                <div class="pagination-container" v-if="totalItem > 0">
+                    <el-pagination
+                            background
+                            @current-change="handleCurrentChange"
+                            :current-page.sync="currentPage"
+                            :page-size="8"
+                            layout="prev, pager, next"
+                            :total="totalItem">
+                    </el-pagination>
+                </div>
             </div>
             <app-foot></app-foot>
         </app-body>
@@ -288,68 +286,163 @@
 </script>
 
 <style scoped>
-    .idle-card {
-        height: 300px;
-        border: #eeeeee solid 1px;
-        margin-bottom: 15px;
-        cursor: pointer;
+    .main-content {
+        min-height: 85vh;
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+
+    .tabs-container {
+        margin-bottom: 32px;
+        display: flex;
+        justify-content: center;
+    }
+
+    /* Apple Style Tabs Override */
+    ::v-deep .el-tabs__header {
+        margin: 0;
+        border-bottom: none;
+    }
+
+    ::v-deep .el-tabs__nav-wrap::after {
+        display: none;
+    }
+
+    ::v-deep .el-tabs__nav {
+        border: none !important;
+        background-color: var(--color-bg-secondary);
+        border-radius: var(--radius-full);
+        padding: 4px;
+    }
+
+    ::v-deep .el-tabs__item {
+        border: none !important;
+        border-radius: var(--radius-full);
+        height: 32px;
+        line-height: 32px;
+        padding: 0 20px !important;
+        margin: 0 2px;
+        color: var(--color-text-secondary);
+        font-weight: 500;
         transition: all 0.3s ease;
     }
 
-    .idle-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    ::v-deep .el-tabs__item.is-active {
+        background-color: #fff;
+        color: var(--color-text-primary);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
-    .fenye {
+    ::v-deep .el-tabs__item:hover:not(.is-active) {
+        color: var(--color-text-primary);
+    }
+
+    /* Goods List */
+    .goods-col {
+        margin-bottom: 32px;
+    }
+
+    .idle-card {
+        height: 100%;
         display: flex;
-        justify-content: center;
-        height: 60px;
-        align-items: center;
+        flex-direction: column;
+        padding: 0; /* Override default padding for image */
+        overflow: hidden;
+        cursor: pointer;
+        background: #fff;
+    }
+
+    .card-image-wrapper {
+        width: 100%;
+        padding-top: 100%; /* 1:1 Aspect Ratio */
+        position: relative;
+        background-color: #f9f9f9;
+    }
+
+    .card-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.5s ease;
+    }
+
+    .idle-card:hover .card-image {
+        transform: scale(1.05);
+    }
+
+    .card-content {
+        padding: 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
     }
 
     .idle-title {
-        font-size: 18px;
+        font-size: 17px;
         font-weight: 600;
+        color: var(--color-text-primary);
+        margin-bottom: 8px;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        margin: 10px;
     }
 
-    .idle-prive {
-        font-size: 16px;
-        color: red;
+    .idle-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 16px;
+    }
+
+    .idle-price {
+        color: var(--color-brand-highlight);
+        font-weight: 600;
+    }
+
+    .currency {
+        font-size: 14px;
+    }
+
+    .amount {
+        font-size: 20px;
     }
 
     .idle-place {
         font-size: 13px;
-        color: #666666;
-        float: right;
-        padding-right: 20px;
-    }
-
-    .user-nickname {
-        color: #999999;
-        font-size: 12px;
-        display: flex;
-        align-items: center;
-        height: 30px;
-        padding-left: 10px;
+        color: var(--color-text-secondary);
     }
 
     .user-info {
-        margin-top: 10px;
-        float: right;
-        padding: 5px 10px;
-        height: 30px;
         display: flex;
+        align-items: center;
+        margin-top: auto;
+        padding-top: 12px;
+        border-top: 1px solid var(--color-bg-secondary);
+    }
+
+    .user-avatar {
+        margin-right: 8px;
+        border: 1px solid var(--color-bg-secondary);
+    }
+
+    .user-nickname {
+        font-size: 13px;
+        color: var(--color-text-secondary);
     }
 
     .empty-state {
+        padding: 60px 0;
+    }
+
+    .pagination-container {
         display: flex;
         justify-content: center;
-        align-items: center;
-        height: 300px;
+        margin-top: 40px;
+    }
+    
+    ::v-deep .el-pagination.is-background .el-pager li:not(.disabled).active {
+        background-color: var(--color-brand-highlight);
     }
 </style>
