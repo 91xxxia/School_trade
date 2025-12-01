@@ -14,6 +14,14 @@
             </div>
             
             <div class="header-actions">
+                <el-button 
+                    circle 
+                    :icon="isDarkMode ? 'el-icon-sunny' : 'el-icon-moon'" 
+                    class="apple-btn-secondary action-item" 
+                    @click="toggleTheme"
+                    :title="isDarkMode ? '切换浅色模式' : '切换深色模式'">
+                </el-button>
+
                 <el-button type="primary" icon="el-icon-plus" class="apple-btn-primary action-item" @click="toRelease" round>发布</el-button>
                 
                 <el-button plain icon="el-icon-chat-dot-round" class="apple-btn-secondary action-item" @click="toMessage" round>留言</el-button>
@@ -51,10 +59,21 @@
                 avatar:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
                 isLogin:false,
                 unreadCount: 0,
-                unreadPollingInterval: null // 添加轮询定时器
+                unreadPollingInterval: null, // 添加轮询定时器
+                isDarkMode: false
             };
         },
         created(){
+            // Initialize Theme
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                this.isDarkMode = true;
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                this.isDarkMode = false;
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+
             if(! this.$globalData.userInfo.nickname){
                 this.$api.getUserInfo().then(res=>{
                     console.log('Header getUserInfo:',res);
@@ -178,6 +197,13 @@
                     if (c.indexOf(name) === 0) return c.substring(name.length, c.length);
                 }
                 return "";
+            },
+            
+            toggleTheme() {
+                this.isDarkMode = !this.isDarkMode;
+                const theme = this.isDarkMode ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
             }
         }
     };
@@ -193,6 +219,10 @@
         background: rgba(255, 255, 255, 0.8); /* Fallback */
         z-index: 1000;
         transition: var(--transition-base);
+    }
+
+    [data-theme='dark'] .header {
+        background: rgba(28, 28, 30, 0.8);
     }
 
     .header-container {
