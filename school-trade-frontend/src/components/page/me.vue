@@ -86,6 +86,73 @@
                         </span>
                     </el-dialog>
 
+                    <el-dialog
+                            title="编辑商品"
+                            :visible.sync="editDialogVisible"
+                            width="700px"
+                            custom-class="apple-dialog"
+                            :close-on-click-modal="false">
+                        <div class="edit-form-container">
+                             <div class="form-group">
+                                <div class="label-text">商品名称</div>
+                                <el-input v-model="editForm.idleName" maxlength="30" show-word-limit class="apple-input"></el-input>
+                            </div>
+                            <div class="form-group">
+                                <div class="section-header">
+                                    <div class="label-text">商品描述</div>
+                                    <div class="ai-actions">
+                                        <el-button
+                                                type="text"
+                                                class="ai-btn"
+                                                :loading="aiLoading"
+                                                :disabled="aiLoading || !editImgList.length"
+                                                @click="handleEditAIDescription">
+                                            <i class="el-icon-magic-stick"></i> AI 帮写
+                                        </el-button>
+                                    </div>
+                                </div>
+                                <el-input type="textarea" :rows="4" v-model="editForm.idleDetails" maxlength="1000" show-word-limit class="apple-textarea"></el-input>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group half-width">
+                                    <div class="label-text">所在地区</div>
+                                    <el-cascader :options="options" v-model="editSelectedOptions" @change="handleEditAddressChange" :separator="' / '" class="apple-cascader full-width"></el-cascader>
+                                </div>
+                                <div class="form-group half-width">
+                                    <div class="label-text">商品分类</div>
+                                    <el-select v-model="editForm.idleLabel" class="apple-select full-width">
+                                        <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                                    </el-select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="label-text">价格</div>
+                                <el-input-number v-model="editForm.idlePrice" :precision="2" :step="10" :max="10000000" :controls="false" class="apple-input-number"></el-input-number>
+                            </div>
+                            <div class="form-group">
+                                <div class="label-text">商品图片</div>
+                                <el-upload
+                                    action="/api/file"
+                                    list-type="picture-card"
+                                    :file-list="editImgList"
+                                    :on-preview="handleEditPreview"
+                                    :on-remove="handleEditRemove"
+                                    :on-success="handleEditSuccess"
+                                    :limit="10"
+                                    :on-exceed="handleEditExceed">
+                                    <i class="el-icon-plus"></i>
+                                </el-upload>
+                                <el-dialog :visible.sync="editImgDialogVisible" append-to-body>
+                                    <img width="100%" :src="editDialogImageUrl" alt="">
+                                </el-dialog>
+                            </div>
+                        </div>
+                        <span slot="footer" class="dialog-footer">
+                            <el-button @click="editDialogVisible = false">取消</el-button>
+                            <el-button type="primary" class="apple-btn-primary" @click="saveEditItem">保存修改</el-button>
+                        </span>
+                    </el-dialog>
+
                     <div class="content-tabs-container">
                         <el-tabs v-model="activeName" @tab-click="handleClick" class="apple-tabs">
                             <el-tab-pane label="我发布的" name="1"></el-tab-pane>
@@ -119,6 +186,12 @@
                                             <el-tag size="small" effect="plain">{{orderStatus[item.orderStatus]}}</el-tag>
                                         </div>
                                         <div class="item-actions" v-if="activeName!=='4'&&activeName!=='5'">
+                                            <el-button v-if="activeName==='2'" type="success" plain size="small" class="apple-btn-success-plain" @click.stop="relist(item,index)">
+                                                重新上架
+                                            </el-button>
+                                            <el-button v-if="activeName==='1' || activeName==='2'" type="primary" plain size="small" class="apple-btn-secondary" @click.stop="openEditDialog(item)">
+                                                编辑
+                                            </el-button>
                                             <el-button type="danger" plain size="small" class="apple-btn-danger-plain" @click.stop="handle(activeName,item,index)">
                                                 {{handleName[activeName-1]}}
                                             </el-button>
@@ -203,6 +276,7 @@
     import AppBody from '../common/AppPageBody.vue'
     import AppFoot from '../common/AppFoot.vue'
     import options from '../common/country-data.js'
+    import { generateIdleDescription } from '../../api/ai';
 
     export default {
         name: "me",
@@ -251,7 +325,53 @@
                     nickname: "",
                     signInTime: "",
                 },
-                addressData: []
+                addressData: [],
+                editDialogVisible: false,
+                editForm: {
+                    id: '',
+                    idleName: '',
+                    idleDetails: '',
+                    idlePlace: '',
+                    idleLabel: '',
+                    idlePrice: 0,
+                    pictureList: ''
+                },
+                editImgList: [],
+                editDialogImageUrl: '',
+                editImgDialogVisible: false,
+                editSelectedOptions: [],
+                aiLoading: false,
+                options2: [{
+                    value: 1,
+                    label: '数码'
+                }, {
+                    value: 2,
+                    label: '家电'
+                }, {
+                    value: 3,
+                    label: '户外'
+                }, {
+                    value: 4,
+                    label: '图书'
+                }, {
+                    value: 6,
+                    label: '美妆'
+                }, {
+                    value: 7,
+                    label: '服饰'
+                }, {
+                    value: 8,
+                    label: '日用'
+                }, {
+                    value: 9,
+                    label: '学习'
+                }, {
+                    value: 10,
+                    label: '票务'
+                }, {
+                    value: 5,
+                    label: '其他'
+                }]
             };
         },
         created() {
@@ -365,6 +485,150 @@
             handleClick(tab, event) {
                 // console.log(tab, event);
                 console.log(this.activeName);
+            },
+            openEditDialog(item) {
+                this.editForm = {
+                    id: item.id,
+                    idleName: item.idleName,
+                    idleDetails: item.idleDetails,
+                    idlePlace: item.idlePlace,
+                    idleLabel: item.idleLabel,
+                    idlePrice: item.idlePrice,
+                    pictureList: item.pictureList
+                };
+                
+                // Handle images
+                this.editImgList = [];
+                if (item.pictureList) {
+                    try {
+                        const urls = JSON.parse(item.pictureList);
+                        this.editImgList = urls.map((url, index) => ({
+                            name: 'image-' + index,
+                            url: url
+                        }));
+                    } catch (e) {
+                        console.error('Error parsing pictureList', e);
+                    }
+                }
+
+                // Handle location (Cascader)
+                // Since we only store the leaf node or string in idlePlace, we might not be able to fully restore the cascader selection.
+                // We will leave editSelectedOptions empty initially, or try to set it if possible.
+                // For now, we just clear it. If user changes it, we update idlePlace.
+                this.editSelectedOptions = []; 
+                
+                this.editDialogVisible = true;
+            },
+            handleEditAddressChange(value) {
+                if (value && value.length > 0) {
+                    this.editForm.idlePlace = value[1]; // Assuming we want the city name like in release.vue
+                }
+            },
+            handleEditRemove(file, fileList) {
+                this.editImgList = fileList;
+            },
+            handleEditPreview(file) {
+                this.editDialogImageUrl = file.url || file.response.data;
+                this.editImgDialogVisible = true;
+            },
+            handleEditSuccess(response, file, fileList) {
+                // Element UI upload success callback
+                // We need to update editImgList to include the new file with the correct URL from response
+                // fileList contains the new file, but its 'url' property might be blob:..., we need the server url
+                if (response.status_code === 1) {
+                     // Update the file in the list with the real URL
+                     file.url = response.data;
+                     this.editImgList = fileList;
+                } else {
+                    this.$message.error('上传失败');
+                    // Remove the failed file
+                    this.editImgList = fileList.slice(0, -1);
+                }
+            },
+            handleEditExceed(files, fileList) {
+                this.$message.warning(`限制10张图片`);
+            },
+            async handleEditAIDescription() {
+                // Use editImgList
+                const imgUrls = this.editImgList.map(file => file.url || (file.response && file.response.data));
+                if (imgUrls.length === 0) {
+                    this.$message.warning('请先上传至少一张图片再使用AI描写');
+                    return;
+                }
+                this.aiLoading = true;
+                try {
+                    const aiText = await generateIdleDescription(imgUrls);
+                    this.editForm.idleDetails = aiText;
+                    this.$message.success('已生成描述，可根据需要微调');
+                } catch (error) {
+                    const response = error && error.response;
+                    const respData = response && response.data;
+                    const respError = respData && respData.error;
+                    const tip = (respError && respError.message) || (error && error.message) || 'AI生成描述失败';
+                    this.$message.error(tip);
+                } finally {
+                    this.aiLoading = false;
+                }
+            },
+            relist(item, index) {
+                 this.$confirm('确认重新上架该商品吗？', '提示', {
+                    confirmButtonText: '确认',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$api.updateIdleItem({
+                        id: item.id,
+                        idleStatus: 1
+                    }).then(res => {
+                        if (res.status_code === 1) {
+                            this.$message.success('上架成功');
+                            this.dataList[1].splice(index, 1);
+                            item.idleStatus = 1;
+                            this.dataList[0].unshift(item);
+                        } else {
+                            this.$message.error(res.msg || '上架失败');
+                        }
+                    });
+                }).catch(() => {});
+            },
+            saveEditItem() {
+                if (!this.editForm.idleName || !this.editForm.idleDetails || !this.editForm.idlePrice || !this.editForm.idleLabel) {
+                    this.$message.warning('请填写完整信息');
+                    return;
+                }
+                
+                // Process images
+                const imgUrls = this.editImgList.map(file => file.url || (file.response && file.response.data));
+                if (imgUrls.length === 0) {
+                    this.$message.warning('请至少上传一张图片');
+                    return;
+                }
+                this.editForm.pictureList = JSON.stringify(imgUrls);
+
+                this.$api.updateIdleItem(this.editForm).then(res => {
+                    if (res.status_code === 1) {
+                        this.$message.success('修改成功');
+                        this.editDialogVisible = false;
+                        
+                        // Update local data
+                        // We need to find the item in dataList and update it
+                        // Since we don't know which tab it is in easily without passing it, we can search or refresh.
+                        // Refreshing is safer but slower. Let's try to update locally.
+                        // We know activeName.
+                        const listIndex = parseInt(this.activeName) - 1;
+                        if (this.dataList[listIndex]) {
+                            const itemIndex = this.dataList[listIndex].findIndex(i => i.id === this.editForm.id);
+                            if (itemIndex !== -1) {
+                                const updatedItem = { ...this.dataList[listIndex][itemIndex], ...this.editForm };
+                                // Update imgUrl for display
+                                updatedItem.imgUrl = imgUrls[0];
+                                this.$set(this.dataList[listIndex], itemIndex, updatedItem);
+                            }
+                        }
+                    } else {
+                        this.$message.error(res.msg || '修改失败');
+                    }
+                });
             },
             saveUserNickname() {
                 this.notUserNicknameEdit = true;
@@ -600,6 +864,41 @@
         padding-top: 40px;
         padding-bottom: 40px;
         min-height: 85vh;
+    }
+
+    ::v-deep .apple-textarea .el-textarea__inner {
+        border: none;
+        background-color: var(--color-bg-secondary);
+        border-radius: var(--radius-md);
+        padding: 12px;
+        font-size: 14px;
+        font-family: inherit;
+        resize: none;
+        transition: all 0.3s ease;
+    }
+
+    ::v-deep .apple-textarea .el-textarea__inner:focus {
+        background-color: #fff;
+        box-shadow: 0 0 0 2px var(--color-brand-highlight);
+    }
+    
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+    
+    .ai-actions {
+        display: flex;
+        align-items: center;
+    }
+
+    .ai-btn {
+        color: var(--color-brand-highlight);
+        font-weight: 500;
+        padding: 0;
+        font-size: 14px;
     }
 
     .user-profile-card {

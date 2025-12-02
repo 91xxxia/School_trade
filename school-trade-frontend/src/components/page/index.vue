@@ -125,7 +125,10 @@
         },
         created() {
             this.checkLoginStatus();
-            this.findIdleTiem(1);
+            this.labelName = this.$route.query.labelName || '0';
+            let page = parseInt(this.$route.query.page) || 1;
+            this.currentPage = page;
+            this.findIdleTiem(page);
         },
         watch:{
             $route(to,from){

@@ -313,6 +313,7 @@ export default {
     display: flex;
     flex-direction: column;
     position: relative;
+    background-color: var(--color-bg-primary);
 }
 
 /* 固定头部 */
@@ -320,13 +321,14 @@ export default {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: white;
+    background: var(--color-bg-content);
     flex-shrink: 0;
+    transition: background-color 0.3s;
 }
 
 .message-header {
     padding: 15px 20px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--color-bg-tertiary);
     display: flex;
     align-items: center;
 }
@@ -348,6 +350,7 @@ export default {
 .nickname {
     font-size: 16px;
     font-weight: 600;
+    color: var(--color-text-primary);
 }
 
 /* 消息列表容器 - 可滚动区域 */
@@ -361,8 +364,9 @@ export default {
     height: 100%;
     padding: 20px;
     overflow-y: auto;
-    background-color: #f5f5f5;
+    background-color: var(--color-bg-primary);
     box-sizing: border-box;
+    transition: background-color 0.3s;
 }
 
 .message-item {
@@ -395,21 +399,24 @@ export default {
 }
 
 .message-item.received .text {
-    background-color: white;
+    background-color: var(--color-bg-content);
+    color: var(--color-text-primary);
     padding: 10px 15px;
     border-radius: 18px 18px 18px 0;
+    box-shadow: var(--shadow-card);
 }
 
 .message-item.sent .text {
-    background-color: #409eff;
+    background-color: var(--color-brand-highlight);
     color: white;
     padding: 10px 15px;
     border-radius: 18px 18px 0 18px;
+    box-shadow: 0 2px 8px rgba(90, 200, 250, 0.3);
 }
 
 .time {
     font-size: 12px;
-    color: #999;
+    color: var(--color-text-secondary);
     margin-top: 5px;
     text-align: right;
 }
@@ -419,13 +426,14 @@ export default {
     position: sticky;
     bottom: 0;
     z-index: 100;
-    background: white;
+    background: var(--color-bg-content);
     flex-shrink: 0;
+    transition: background-color 0.3s;
 }
 
 .message-input-area {
     padding: 15px 20px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--color-bg-tertiary);
     display: flex;
     gap: 10px;
 }
